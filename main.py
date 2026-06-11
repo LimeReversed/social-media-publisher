@@ -5,19 +5,26 @@ from Helpers.file_helper import *
 from datetime import datetime
 
 def print_next_publish(publish_list: list[Publication]):
-    if publish_list:
-        next_publication = min(
-            (publication for publication in publish_list if publication.upload_time is not None),
-            key=lambda publication: publication.upload_time,
-            default=None
-        )
-        print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
+    scheduled_publications = [publication for publication in publish_list if publication.upload_time is not None]
+
+    if not scheduled_publications:
+        return
+
+    # FIX - A smoother version than a method inside a method
+    def get_upload_time(publication: Publication) -> datetime:
+        if publication.upload_time is None:
+            return datetime.max
+
+        return publication.upload_time
+
+    next_publication = min(scheduled_publications, key=get_upload_time)
+    print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
 
 print("Initializing...")
 publish_list: list[Publication] = []
 
 config: Config = load_config(f"{get_current_directory()}/config.json")
-upload_times = UploadTimes(config.uploadTimes)
+upload_times = UploadTimes(config.uploadTimes, config.startTime)
 
 for map_item in config.maps:
     map_path = map_item.map

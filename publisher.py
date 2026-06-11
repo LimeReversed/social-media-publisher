@@ -90,12 +90,12 @@ class Platsforms(Enum):
     BLUESKY = "Bluesky"
     
 class Publication:
-    def __init__(self, video: Video | None = None, meta_data: MetaData | None = None, upload_time: datetime | None = None):
+    def __init__(self, video: Video, meta_data: MetaData, upload_time: datetime | None = None):
         self.publishers: dict[str, Publisher] = {}
         self.upload_time: datetime | None = upload_time
-        self.video: Video | None = video
+        self.video: Video = video
 
-        youtube_post = YoutubePublisher(
+        self.youtube_post = YoutubePublisher(
             description=meta_data.youtube.description,
             title=meta_data.youtube.titlePrefix + video.name,
             video_path=video.path,
@@ -103,27 +103,17 @@ class Publication:
             keywords=",".join(meta_data.youtube.tags)
         )
 
-        bluesky_post = BlueskyWithVideoPublisher(
+        self.bluesky_post = BlueskyWithVideoPublisher(
             # FIX maybe should be the name of the file. 
-            description=meta_data.bluesky.description,
-            youtube_video_id=youtube_post.video_id
+            description=meta_data.bluesky.description
         )
-
-        self.add_publisher(Platsforms.YOUTUBE, youtube_post)
-        self.add_publisher(Platsforms.BLUESKY, bluesky_post)
-
-
-    def add_publisher(self, platform: Platsforms, publisher: Publisher):
-        self.publishers[platform.value] = publisher
 
     def publish_all(self):
         # Important to post YouTube first to get the video ID for the Bluesky post if needed
-        if Platsforms.YOUTUBE.value in self.publishers:
-            self.publishers[Platsforms.YOUTUBE.value].publish()
-            self.publishers[Platsforms.BLUESKY.value].youtube_video_id = self.publishers[Platsforms.YOUTUBE.value].video_id
+        
+        self.youtube_post.publish()
+        self.bluesky_post.youtube_video_id = self.youtube_post.video_id
 
-        time.sleep(300)  # Small delay to ensure YouTube video ID is available for Bluesky post
-        # Here we can loop through the rest:
-        for platform, publisher in self.publishers.items():
-            if platform != Platsforms.YOUTUBE.value:
-                publisher.publish()
+        time.sleep(300)  # Small delay to ensure YouTube video ID is available for the publishers that need it.
+       
+        self.bluesky_post.publish()

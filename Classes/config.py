@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import datetime
 from typing import Any
 
 @dataclass
@@ -74,13 +75,19 @@ class UploadTime:
 @dataclass
 class Config:
     uploadTimes: list[UploadTime]
+    startTime: datetime.datetime
     uploaded: list[str]
     maps: list[MapItem]
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Config":
+        
+        start_date_string = data.get("startDate", data.get("startTime", None))
+        start_time = datetime.datetime.now() if start_date_string == None else datetime.datetime.fromisoformat(start_date_string) 
+        
         return cls(
             uploadTimes=[UploadTime.from_dict(item) for item in data.get("uploadTimes", [])],
+            startTime=start_time,
             uploaded=data.get("uploaded", []),
             maps=[MapItem.from_dict(item) for item in data.get("maps", [])],
         )

@@ -1,11 +1,19 @@
 import glob
 import json
 import os
+from datetime import date, datetime
 from dataclasses import asdict, is_dataclass
 from typing import Any
 from Classes.config import Config
 
-def get_files(directory: str, file_types: list[str]=None) -> list[str]:
+
+def json_default(value: Any) -> str:
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
+def get_files(directory: str, file_types: list[str]=[]) -> list[str]:
     # Use '**' to search recursively and file_types to match specific file types
     pattern = os.path.join(directory, '**', '*')
     files = [f for f in glob.glob(pattern, recursive=True) if os.path.isfile(f)]
@@ -16,7 +24,7 @@ def get_files(directory: str, file_types: list[str]=None) -> list[str]:
     return files
 
 
-def get_files_from_directories(directories: list[str], file_types: list[str]=None) -> list[str]:
+def get_files_from_directories(directories: list[str], file_types: list[str]=[]) -> list[str]:
     files = []
 
     for directory in directories:
@@ -30,11 +38,11 @@ def save_json(data: Any, file_path: str) -> None:
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    if is_dataclass(data):
+    if is_dataclass(data) and not isinstance(data, type):
         data = asdict(data)
 
     if not isinstance(data, str):
-        data = json.dumps(data, indent=2)
+        data = json.dumps(data, indent=2, default=json_default)
 
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(data)

@@ -9,9 +9,9 @@ import random
 import sys
 import time
 
-from apiclient.discovery import build
-from apiclient.errors import HttpError
-from apiclient.http import MediaFileUpload
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import run_flow
@@ -193,7 +193,7 @@ def resumable_upload(insert_request) -> str:
             sleep_seconds = random.random() * max_sleep
             print("Sleeping %f seconds and then retrying..." % sleep_seconds)
             time.sleep(sleep_seconds)
-    return None
+    return ""
 
 
 def post_youtube_video(video_path: str, title: str, description: str, category: str = "22", keywords: str = "", privacy_status: str = "public") -> str:
@@ -218,3 +218,4 @@ def post_youtube_video(video_path: str, title: str, description: str, category: 
         return initialize_upload(youtube, video_path, title, description, category, keywords, privacy_status)
     except HttpError as e:
         print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+        return ""
