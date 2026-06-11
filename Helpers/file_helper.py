@@ -1,6 +1,8 @@
 import glob
 import json
 import os
+from dataclasses import asdict, is_dataclass
+from typing import Any
 from Classes.config import Config
 
 def get_files(directory: str, file_types: list[str]=None) -> list[str]:
@@ -22,11 +24,17 @@ def get_files_from_directories(directories: list[str], file_types: list[str]=Non
 
     return files
 
-def save_json(data: str, file_path: str) -> None:
+def save_json(data: Any, file_path: str) -> None:
     directory = os.path.dirname(file_path)
 
     if not os.path.exists(directory):
         os.makedirs(directory)
+
+    if is_dataclass(data):
+        data = asdict(data)
+
+    if not isinstance(data, str):
+        data = json.dumps(data, indent=2)
 
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(data)

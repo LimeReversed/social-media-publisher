@@ -104,6 +104,7 @@ class Publication:
         )
 
         bluesky_post = BlueskyWithVideoPublisher(
+            # FIX maybe should be the name of the file. 
             description=meta_data.bluesky.description,
             youtube_video_id=youtube_post.video_id
         )
@@ -119,6 +120,7 @@ class Publication:
         # Important to post YouTube first to get the video ID for the Bluesky post if needed
         if Platsforms.YOUTUBE.value in self.publishers:
             self.publishers[Platsforms.YOUTUBE.value].publish()
+            self.publishers[Platsforms.BLUESKY.value].youtube_video_id = self.publishers[Platsforms.YOUTUBE.value].video_id
 
         time.sleep(300)  # Small delay to ensure YouTube video ID is available for Bluesky post
         # Here we can loop through the rest:
