@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+import time
 from enum import Enum
 import hashlib
 import os
@@ -99,8 +100,7 @@ class Publication:
             title=meta_data.youtube.titlePrefix + video.name,
             video_path=video.path,
             category=str(meta_data.youtube.category),
-            keywords=",".join(meta_data.youtube.tags),
-            privacy_status="private"
+            keywords=",".join(meta_data.youtube.tags)
         )
 
         bluesky_post = BlueskyWithVideoPublisher(
@@ -119,6 +119,8 @@ class Publication:
         # Important to post YouTube first to get the video ID for the Bluesky post if needed
         if Platsforms.YOUTUBE.value in self.publishers:
             self.publishers[Platsforms.YOUTUBE.value].publish()
+
+        time.sleep(300)  # Small delay to ensure YouTube video ID is available for Bluesky post
         # Here we can loop through the rest:
         for platform, publisher in self.publishers.items():
             if platform != Platsforms.YOUTUBE.value:

@@ -14,7 +14,7 @@ from apiclient.errors import HttpError
 from apiclient.http import MediaFileUpload
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
-from oauth2client.tools import argparser, run_flow
+from oauth2client.tools import run_flow
 from typing import TypedDict, Optional
 
 class Thumbnail(TypedDict):
@@ -207,6 +207,10 @@ def post_youtube_video(video_path: str, title: str, description: str, category: 
         category=category,
         keywords=keywords,
         privacyStatus=privacy_status,
+        auth_host_name="localhost",
+        noauth_local_webserver=False,
+        auth_host_port=[8080, 8090],
+        logging_level="ERROR",
     )
 
     youtube = get_authenticated_service(args)

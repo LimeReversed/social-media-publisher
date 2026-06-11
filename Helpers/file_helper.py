@@ -3,7 +3,7 @@ import json
 import os
 from Classes.config import Config
 
-def get_files(directory, file_types=None):
+def get_files(directory: str, file_types: list[str]=None) -> list[str]:
     # Use '**' to search recursively and file_types to match specific file types
     pattern = os.path.join(directory, '**', '*')
     files = [f for f in glob.glob(pattern, recursive=True) if os.path.isfile(f)]
@@ -14,7 +14,7 @@ def get_files(directory, file_types=None):
     return files
 
 
-def get_files_from_directories(directories, file_types=None):
+def get_files_from_directories(directories: list[str], file_types: list[str]=None) -> list[str]:
     files = []
 
     for directory in directories:
@@ -22,7 +22,7 @@ def get_files_from_directories(directories, file_types=None):
 
     return files
 
-def save_json(data, file_path):
+def save_json(data: str, file_path: str) -> None:
     directory = os.path.dirname(file_path)
 
     if not os.path.exists(directory):
@@ -32,7 +32,7 @@ def save_json(data, file_path):
         file.write(data)
 
 
-def load_json(file_path):
+def load_json(file_path: str):
     directory = os.path.dirname(file_path)
 
     if directory and not os.path.exists(directory):

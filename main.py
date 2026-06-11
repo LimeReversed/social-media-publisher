@@ -4,6 +4,15 @@ from publisher import *
 from Helpers.file_helper import *
 from datetime import datetime
 
+def print_next_publish(publish_list: list[Publication]):
+    if publish_list:
+        next_publication = min(
+            (publication for publication in publish_list if publication.upload_time is not None),
+            key=lambda publication: publication.upload_time,
+            default=None
+        )
+        print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
+
 print("Initializing...")
 publish_list: list[Publication] = []
 
@@ -30,6 +39,7 @@ print("Publish schedule:")
 for publication in publish_list:
     print(f"{publication.video.name} at {publication.upload_time}")
 print("Starting publish loop...")
+print_next_publish(publish_list)
 
 while True:
     now = datetime.now()
@@ -38,16 +48,9 @@ while True:
             print(f"Publishing {publication.video.name}...")
             publication.publish_all()
             publish_list.remove(publication)
-            config.uploaded_videos.append(publication.video.video_id)
-            save_json(config.__dict__, f"{get_current_directory()}/config.json")
+            config.uploaded.append(publication.video.video_id)
+            save_json(config, f"{get_current_directory()}/config.json")
+            print_next_publish(publish_list)
     
-    if publish_list:
-        next_publication = min(
-            (publication for publication in publish_list if publication.upload_time is not None),
-            key=lambda publication: publication.upload_time,
-            default=None
-        )
-        print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
-    
-    time.sleep(900)  # Check every 15 minutes
-    
+    # time.sleep(900)  # Check every 15 minutes
+    time.sleep(5)  # Check every 5 seconds    
