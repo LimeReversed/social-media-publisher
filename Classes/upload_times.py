@@ -22,9 +22,8 @@ class UploadTimes:
     
 def next_weekday(start_date: datetime.date, target_weekday: int) -> datetime.date:
     # Monday=0, Tuesday=1, Wednesday=2, ..., Sunday=6
-    days_ahead = (target_weekday - start_date.weekday() + 7) % 7
-    if days_ahead == 0:
-        days_ahead = 7
+    days_ahead = (target_weekday - start_date.weekday()) % 7
+
     return start_date + datetime.timedelta(days=days_ahead)
 
 def next_upload_datetime(upload_time: UploadTime, now: datetime.datetime | None = None) -> datetime.datetime:

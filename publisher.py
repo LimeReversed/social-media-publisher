@@ -100,6 +100,7 @@ class Publication:
             video_path=video.path,
             category=str(meta_data.youtube.category),
             keywords=",".join(meta_data.youtube.tags),
+            privacy_status="private"
         )
 
         bluesky_post = BlueskyWithVideoPublisher(
