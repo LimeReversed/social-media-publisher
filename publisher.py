@@ -114,7 +114,7 @@ class Publication:
 
 class Publications:
     def __init__(self, publication_list: list[Publication], upload_times: UploadTimes):
-        self.publication_list = publication_list
+        self.publication_list: list[Publication] = publication_list
         self.upload_times: UploadTimes = upload_times
         self.sort_by_creation_time()
         self.populate_upload_times()
@@ -147,20 +147,9 @@ class Publications:
             publication.upload_time = self.upload_times.pop()
 
     def print_next_publish(self) -> None:
-        scheduled_publications = [publication for publication in self.publication_list if publication.upload_time is not None]
-
-        # There should be no None here. 
-        if not scheduled_publications:
-            return
-
-        # FIX - A smoother version than a method inside a method
-        def get_upload_time(publication: Publication) -> datetime:
-            if publication.upload_time is None:
-                return datetime.max
-
-            return publication.upload_time
-
-        next_publication = min(scheduled_publications, key=get_upload_time)
+        # Using datetime.max because uploade_time can be None and therefore lambda is refusing it unless I set a fallback. 
+        next_publication = min(self.publication_list, key=lambda pub: pub.upload_time or datetime.max)
+        
         print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
 
     def print_schedule(self):
