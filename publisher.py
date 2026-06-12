@@ -7,18 +7,10 @@ import os
 from Classes.config import MetaData
 from youtube_upload_video import post_youtube_video
 from bluesky_post import post_bluesky_with_youtube_video, post_bluesky
+from Classes.upload_times import UploadTimes
+from Classes.config import Config
+from Helpers.file_helper import *
 
-# UploadDate
-# Thumbnail
-# VideoId
-# Category
-# Description
-# Title
-# Tags
-# PrivacyStatus
-# VideoPath
-# VideoUrl
-# Type - Youtube, Bluesky
 # https://medium.com/@johnie5/using-python-to-gather-files-and-file-data-within-a-directory-323ce78346c2
 
 class Video:
@@ -94,26 +86,83 @@ class Publication:
         self.publishers: dict[str, Publisher] = {}
         self.upload_time: datetime | None = upload_time
         self.video: Video = video
+        self.meta_data: MetaData = meta_data
 
         self.youtube_post = YoutubePublisher(
             description=meta_data.youtube.description,
-            title=meta_data.youtube.titlePrefix + video.name,
+            title=self.get_title(),
             video_path=video.path,
             category=str(meta_data.youtube.category),
             keywords=",".join(meta_data.youtube.tags)
         )
 
         self.bluesky_post = BlueskyWithVideoPublisher(
-            # FIX maybe should be the name of the file. 
-            description=meta_data.bluesky.description
+            description=self.get_title()
         )
 
     def publish_all(self):
-        # Important to post YouTube first to get the video ID for the Bluesky post if needed
-        
+        # Important to post YouTube first to get the video ID.
         self.youtube_post.publish()
         self.bluesky_post.youtube_video_id = self.youtube_post.video_id
 
-        time.sleep(300)  # Small delay to ensure YouTube video ID is available for the publishers that need it.
-       
+        time.sleep(300)  # Delay to ensure YouTube video ID is available for the publishers that need it.
         self.bluesky_post.publish()
+
+    def get_title(self) -> str:
+        return self.meta_data.youtube.titlePrefix + self.video.name
+    
+
+class Publications:
+    def __init__(self, publication_list: list[Publication], upload_times: UploadTimes):
+        self.publication_list = publication_list
+        self.upload_times: UploadTimes = upload_times
+        self.sort_by_creation_time()
+        self.populate_upload_times()
+
+    @classmethod
+    def constuct_from_config(cls, config: Config) -> "Publications":
+        upload_times = UploadTimes(config.uploadTimes, config.startTime)
+
+        publish_list: list[Publication] = []
+        for map_item in config.maps:
+            map_path = map_item.map
+            video_paths = get_files(map_path, file_types=[".mp4", ".mov", ".avi", ".mkv"])
+            
+            # Initialze Video
+            for video_path in video_paths:
+                video = Video(video_path)
+
+                # Initialize Publication with video and add to publish_list
+                if not video.video_id in config.uploaded:
+                    publication = Publication(video=video, meta_data=map_item.metaData)
+                    publish_list.append(publication)
+
+        return Publications(publish_list, upload_times)
+
+    def sort_by_creation_time(self) -> None:
+        self.publication_list.sort(key=lambda pub: pub.video.creation_time if pub.video else float('inf'))
+
+    def populate_upload_times(self) -> None:
+        for publication in self.publication_list:
+            publication.upload_time = self.upload_times.pop()
+
+    def print_next_publish(self) -> None:
+        scheduled_publications = [publication for publication in self.publication_list if publication.upload_time is not None]
+
+        # There should be no None here. 
+        if not scheduled_publications:
+            return
+
+        # FIX - A smoother version than a method inside a method
+        def get_upload_time(publication: Publication) -> datetime:
+            if publication.upload_time is None:
+                return datetime.max
+
+            return publication.upload_time
+
+        next_publication = min(scheduled_publications, key=get_upload_time)
+        print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
+
+    def print_schedule(self):
+        for publication in self.publication_list:
+            print(f"{publication.video.name} at {publication.upload_time}")
