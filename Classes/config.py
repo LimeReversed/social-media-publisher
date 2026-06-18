@@ -1,18 +1,28 @@
 from dataclasses import dataclass
 import datetime
+from enum import Enum
 from typing import Any
+from abc import ABC, abstractmethod
+
+class Platforms(Enum):
+    YOUTUBE = "youtube"
+    BLUESKY = "bluesky"
+    
+@dataclass
+class PlatformData(ABC):
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "PlatformData":
+        ...
 
 @dataclass
-class YouTubeMeta:
-    titlePrefix: str
+class YoutubeData(PlatformData):
     description: str
     tags: list[str]
     category: int
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "YouTubeMeta":
+    def from_dict(cls, data: dict[str, Any]) -> "YoutubeData":
         return cls(
-            titlePrefix=data.get("titlePrefix", ""),
             description=data.get("description", ""),
             tags=data.get("tags", []),
             category=data.get("category", 0),
@@ -20,12 +30,12 @@ class YouTubeMeta:
 
 
 @dataclass
-class BlueskyMeta:
+class BlueskyData(PlatformData):
     description: str
     tags: list[str]
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "BlueskyMeta":
+    def from_dict(cls, data: dict[str, Any]) -> "BlueskyData":
         return cls(
             description=data.get("description", ""),
             tags=data.get("tags", []),
@@ -33,31 +43,17 @@ class BlueskyMeta:
 
 
 @dataclass
-class MetaData:
-    youtube: YouTubeMeta
-    bluesky: BlueskyMeta
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "MetaData":
-        return cls(
-            youtube=YouTubeMeta.from_dict(data.get("youtube", {})),
-            bluesky=BlueskyMeta.from_dict(data.get("bluesky", {})),
-        )
-
-
-@dataclass
 class MapItem:
     map: str
-    metaData: MetaData
+    platform_data: dict[Platforms, PlatformData]
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "MapItem":
         return cls(
             map=data.get("map", ""),
-            metaData=MetaData.from_dict(data.get("metaData", {})),
+            platform_data={Platforms(platform): PlatformData.from_dict(data) for platform, data in data.get("platformData", {}).items()},
         )
-
-
+    
 @dataclass
 class UploadTime:
     day: int
@@ -74,20 +70,22 @@ class UploadTime:
 
 @dataclass
 class Config:
-    uploadTimes: list[UploadTime]
-    startTime: datetime.datetime
-    uploaded: list[str]
+    config_file_path: str
+    upload_times: list[UploadTime]
+    start_time: datetime.datetime
     maps: list[MapItem]
+    platform_data: dict[str, PlatformData]
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Config":
+    def from_dict(cls, file_path: str, data: dict[str, Any]) -> "Config":
         
         start_date_string = data.get("startDate", data.get("startTime", None))
         start_time = datetime.datetime.now() if start_date_string == None else datetime.datetime.fromisoformat(start_date_string) 
         
         return cls(
-            uploadTimes=[UploadTime.from_dict(item) for item in data.get("uploadTimes", [])],
-            startTime=start_time,
-            uploaded=data.get("uploaded", []),
+            config_file_path=file_path,
+            upload_times=[UploadTime.from_dict(item) for item in data.get("uploadTimes", [])],
+            start_time=start_time,
             maps=[MapItem.from_dict(item) for item in data.get("maps", [])],
+            platform_data= PlatformData.from_dict(data.get("metaData", {})),
         )

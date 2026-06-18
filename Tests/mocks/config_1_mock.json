@@ -1,0 +1,42 @@
+{
+  "uploadTimes": [
+    {
+      "day": 3,
+      "hour": 13,
+      "minute": 0
+    },
+    {
+      "day": 5,
+      "hour": 11,
+      "minute": 0
+    }
+  ],
+  "startDate": "2026-06-01",
+  "platformData": {
+    "youtube": {
+      "description": "",
+      "tags": [],
+      "category": 0
+    },
+    "bluesky": {
+      "description": "",
+      "tags": []
+    }
+  },
+  "maps": [
+    {
+      "map": "./test_videos",
+      "platformData": {
+        "youtube": {
+          "description": "Youtube description",
+          "tags": ["tag1"],
+          "category": 22
+        },
+        "bluesky": {
+          "description": "Bluesky description",
+          "tags": ["tag2"]
+        }
+      }
+    }
+  ]
+}
