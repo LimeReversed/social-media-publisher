@@ -12,14 +12,14 @@ from Helpers.upload_state_helper import (
 
 
 class UploadStateHelperTests(TestCase):
-    def test_get_upload_state_path_replaces_schedule_suffix(self):
+    def test_get_upload_state_path__replaces_schedule_suffix(self):
         config_path = os.path.join("C:/tmp", "name.schedule.json")
 
         result = get_upload_state_path(config_path)
 
         self.assertTrue(result.endswith("name.uploaded.json"))
 
-    def test_mark_uploaded_persists_unique_sorted_ids(self):
+    def test_mark_uploaded__persists_unique_sorted_ids(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             config_path = os.path.join(temp_dir, "config.schedule.json")
             folder_path = os.path.join(temp_dir, "videos")
@@ -33,7 +33,7 @@ class UploadStateHelperTests(TestCase):
             self.assertEqual(["a", "b"], state["folders"][folder_key]["uploaded_ids"])
             self.assertEqual("active", state["folders"][folder_key]["status"])
 
-    def test_mark_folder_completed_sets_status_and_clears_ids(self):
+    def test_mark_folder_completed__sets_status_and_clears_ids(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             config_path = os.path.join(temp_dir, "config.schedule.json")
             folder_path = os.path.join(temp_dir, "videos")

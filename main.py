@@ -6,6 +6,7 @@ from Classes.publication import VideoPublication
 from Classes.publisher_manager import PublisherManager
 from Helpers.config_helper import load_config_list
 from Helpers.file_helper import get_current_directory, get_files
+from Helpers.print_helper import fprint
 from Helpers.schedule_helper import constuct_schedule_from_config_list
 from Helpers.upload_state_helper import mark_uploaded
 
@@ -26,6 +27,7 @@ class PublisherApp:
         )
 
         self.config_list = load_config_list(config_paths)
+        fprint(self.config_list)
         schedule = constuct_schedule_from_config_list(self.config_list)
         self.publisher_manager = PublisherManager(schedule)
         self._wire_events()

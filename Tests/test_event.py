@@ -4,7 +4,7 @@ from Classes.Event import Event
 
 
 class EventTests(TestCase):
-    def test_trigger_calls_registered_listener_with_payload(self):
+    def test_trigger__calls_registered_listener_with_payload(self):
         event = Event()
         calls = []
 
@@ -16,7 +16,7 @@ class EventTests(TestCase):
 
         self.assertEqual([{"ok": True}], calls)
 
-    def test_removed_listener_is_not_called(self):
+    def test_removed_listener__is_not_called(self):
         event = Event()
         calls = []
 
