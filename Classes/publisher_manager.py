@@ -1,5 +1,5 @@
 from Classes.config import Config, YoutubeData, BlueskyData
-from Classes.publication import Publication, VideoPublication
+from Classes.publication import Publication, TextPublication, VideoPublication
 from Classes.publisher import YoutubePublisher, BlueskyPublisher, BlueskyWithVideoPublisher
 from Classes.schedule import Schedule
 from Classes.Event import Event
@@ -11,13 +11,17 @@ class PublisherManager:
         self.on_published = Event()
 
     def publish(self, publication: Publication):
+        youtube_publisher = None
         if publication.platform_data.youtube is not None and isinstance(publication, VideoPublication):
-            youtube_data = publication.platform_data.youtube
-            youtube_publisher = YoutubePublisher(youtube_data.description, publication.video.name, publication.video.path, str(youtube_data.category), ",".join(youtube_data.tags))
+            youtube_publisher = YoutubePublisher(publication)
             youtube_publisher.publish()
-        if publication.platform_data.bluesky is not None:
-            bluesky_data = publication.platform_data.bluesky
-            bluesky_publisher = BlueskyPublisher(bluesky_data.text)
+
+        #FIX: Separate bluesky publication with bluesky with video embedding, so that one can choose to publish to bluesky without a video.
+        # Could do later when I need just text publications to bluesky.
+        if publication.platform_data.bluesky is not None and isinstance(publication, TextPublication):
+            video_id = youtube_publisher.video_id if youtube_publisher else ""
+
+            bluesky_publisher = BlueskyWithVideoPublisher(publication, video_id)
             bluesky_publisher.publish()
         
         self.schedule.publication_list.remove(publication)

@@ -13,6 +13,14 @@ class Publication(ABC):
     def get_name(self):
         ...
 
+class TextPublication(Publication):
+    """TextPublication is a subclass of Publication that represents a text-based publication, such as a post on a social media platform."""
+    def __init__(self, text: str, platform_data: PlatformDataCollection, upload_time: datetime | None = None):
+        super().__init__(platform_data=platform_data, upload_time=upload_time)
+        self.text: str = text
+
+    def get_name(self) -> str:
+        return self.text
 class VideoPublication(Publication):
     """The publication classes hold information about the publication, such as what, when and where to publish."""
     def __init__(

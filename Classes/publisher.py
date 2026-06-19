@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Classes.publication import Publication, VideoPublication
+from Classes.publication import *
 from youtube_upload_video import post_youtube_video
 from bluesky_post import post_bluesky_with_youtube_video, post_bluesky
 
@@ -7,6 +7,7 @@ from bluesky_post import post_bluesky_with_youtube_video, post_bluesky
   
 class Publisher(ABC):
     def __init__(self):
+        ...
 
     @abstractmethod
     def publish(self):
@@ -34,16 +35,16 @@ class YoutubePublisher(Publisher):
         )
 
 class BlueskyPublisher(Publisher):
-    def __init__(self, text: str):
+    def __init__(self, publication: TextPublication):
         super().__init__()
-        self.text: str = text
+        self.text: str = publication.text
 
     def publish(self):
         post_bluesky(text=self.text)
 
 class BlueskyWithVideoPublisher(BlueskyPublisher):
-    def __init__(self, text: str, youtube_video_id: str = ""):
-        super().__init__(text)
+    def __init__(self, publication: TextPublication, youtube_video_id: str = ""):
+        super().__init__(publication)
         self.youtube_video_id: str = youtube_video_id
 
     def publish(self):
