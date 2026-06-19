@@ -14,12 +14,12 @@ class Publisher(ABC):
         ...
 
 class YoutubePublisher(Publisher):
-    def __init__(self, description: str, title: str, video_path: str, category: str = "22", keywords: str = "", privacy_status: str = "public"):
+    def __init__(self, description: str, title: str, video_path: str, category: str = "22", tags: str = "", privacy_status: str = "public"):
         super().__init__(description)
         self.video_path: str = video_path
         self.title: str = title
         self.category: str = category
-        self.keywords: str = keywords
+        self.tags: str = tags
         self.privacy_status: str = privacy_status
         self.type: str = "YouTube"
         self.video_id: str = ""
@@ -30,7 +30,7 @@ class YoutubePublisher(Publisher):
             title=self.title,
             description=self.description,
             category=self.category,
-            keywords=self.keywords,
+            keywords=self.tags,
             privacy_status=self.privacy_status
         )
 

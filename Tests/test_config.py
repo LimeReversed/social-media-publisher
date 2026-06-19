@@ -1,35 +1,42 @@
-from unittest import TestCase
-import datetime
+from unittest import TestCase, result
+from Classes.config import *
+from Helpers.config_helper import *
+import os
+from pprint import pformat
+from dataclasses import asdict
+class ConfigTests(TestCase):
 
-from Classes.config import UploadTime
-from Classes.upload_times import next_upload_datetime
+    def test_platform_data_merge__should_concat_description_and_dedupe_tags(self):
+        global_youtube = YoutubeData(description="global description", tags=["tag1", "tag2"], category=22)
+        local_youtube = YoutubeData(description="local description", tags=["tag2", "tag3"], category=0)
+        merged_youtube = global_youtube.merge(local_youtube)
 
+        self.assertEqual("global description\n\nlocal description", merged_youtube.description)
+        self.assertEqual(["tag1", "tag2", "tag3"], merged_youtube.tags)
+        self.assertEqual(22, merged_youtube.category)
 
-class TimeTests(TestCase):
+        global_bluesky = BlueskyData(text="global post", tags=["a", "b"])
+        local_bluesky = BlueskyData(text="local post", tags=["b", "c"])
+        merged_bluesky = global_bluesky.merge(local_bluesky)
 
-    def test_next_upload_datetime_should_return_correct_dates(self):
-        now = datetime.datetime(2026, 6, 6, 10, 0)  # Saturday
-        upload_time = UploadTime(day=0, hour=11, minute=0)  # Monday at 11:00
-        expected = datetime.datetime(2026, 6, 8, 11, 0)  # Next Monday
+        self.assertEqual("global post\n\nlocal post", merged_bluesky.text)
+        self.assertEqual(["a", "b", "c"], merged_bluesky.tags)
 
-        result = next_upload_datetime(upload_time, now)
+    def test_load_config__should_load_config_from_file(self):
+        platform_data = dict[Platforms, PlatformData]()
+        platform_data[Platforms.YOUTUBE] = YoutubeData(description="Youtube description", tags=["tag1"], category=22)
+        platform_data[Platforms.BLUESKY] = BlueskyData(text="Bluesky description", tags=["tag2"])
 
-        self.assertEqual(expected, result)
+        map_item = FolderItem("./test_videos", platform_data)
+        global_platform_data = dict[Platforms, PlatformData]()
+        global_platform_data[Platforms.YOUTUBE] = YoutubeData(description="", tags=[], category=0)
+        global_platform_data[Platforms.BLUESKY] = BlueskyData(text="", tags=[])
+        upload_times = [UploadTime(day=3, hour=13, minute=0), UploadTime(day=5, hour=11, minute=0)]
+        start_time = datetime.datetime(2026, 6, 1)
+        config_file_path = os.path.abspath("./Tests/mocks/config_mock_1.schedule.json")
 
-    def test_next_upload_datetime_should_keep_today_when_release_is_still_ahead(self):
-        now = datetime.datetime(2026, 6, 8, 10, 0)  # Monday before release
-        upload_time = UploadTime(day=0, hour=11, minute=0)  # Monday at 11:00
-        expected = datetime.datetime(2026, 6, 8, 11, 0)
-
-        result = next_upload_datetime(upload_time, now)
-
-        self.assertEqual(expected, result)
-
-    def test_next_upload__upload_time_is_today_but_after_release_time__should_go_to_next_week(self):
-        now = datetime.datetime(2026, 6, 8, 12, 0)  # Monday an hour after upload time
-        upload_time = UploadTime(day=0, hour=11, minute=0)  # Monday at 11:00
-        expected = datetime.datetime(2026, 6, 15, 11, 0)
-
-        result = next_upload_datetime(upload_time, now)
-
+        expected = Config(config_file_path, upload_times, start_time, [map_item], global_platform_data)
+        result = load_config(config_file_path)
+        # print("EXPECTED:\n" + pformat(asdict(expected), sort_dicts=False, width=100))
+        # print("RESULT:\n" + pformat(asdict(result), sort_dicts=False, width=100))
         self.assertEqual(expected, result)

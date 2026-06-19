@@ -11,7 +11,12 @@ class Platforms(Enum):
 @dataclass
 class PlatformData(ABC):
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict[str, Any]) -> "PlatformData":
+        ...
+
+    @abstractmethod
+    def merge(self, local: "PlatformData") -> "PlatformData":
         ...
 
 @dataclass
@@ -28,30 +33,89 @@ class YoutubeData(PlatformData):
             category=data.get("category", 0),
         )
 
+    def merge(self, other: "YoutubeData") -> "YoutubeData":
+        if not isinstance(other, YoutubeData):
+            raise TypeError("YoutubeData can only merge with YoutubeData")
+
+        return YoutubeData(
+            description=merge_text(self.description, other.description),
+            tags=merge_tags(self.tags, other.tags),
+            category=other.category if other.category else self.category,
+        )
+
 
 @dataclass
 class BlueskyData(PlatformData):
-    description: str
+    text: str
     tags: list[str]
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "BlueskyData":
         return cls(
-            description=data.get("description", ""),
+            text=data.get("text", ""),
             tags=data.get("tags", []),
         )
 
+    def merge(self, other: "BlueskyData") -> "BlueskyData":
+        if not isinstance(other, BlueskyData):
+            raise TypeError("BlueskyData can only merge with BlueskyData")
+
+        return BlueskyData(
+            text=merge_text(self.text, other.text),
+            tags=merge_tags(self.tags, other.tags),
+        )
+
+
+def merge_text(global_text: str, local_text: str) -> str:
+    parts = [text for text in [global_text.strip(), local_text.strip()] if text]
+    return "\n\n".join(parts)
+
+
+def merge_tags(global_tags: list[str], local_tags: list[str]) -> list[str]:
+    seen: set[str] = set()
+    merged: list[str] = []
+
+    for tag in [*global_tags, *local_tags]:
+        if tag not in seen:
+            seen.add(tag)
+            merged.append(tag)
+
+    return merged
+
+
+class PlatformDataFactory:
+    _platform_class_map: dict[Platforms, type[PlatformData]] = {
+        Platforms.YOUTUBE: YoutubeData,
+        Platforms.BLUESKY: BlueskyData,
+    }
+
+    @classmethod
+    def create(cls, platform: Platforms, data: dict[str, Any]) -> PlatformData:
+        platform_cls = cls._platform_class_map.get(platform)
+        if platform_cls is None:
+            raise ValueError(f"No PlatformData parser found for platform: {platform.value}")
+        return platform_cls.from_dict(data)
+
+
+def parse_platform_data_dict(raw_data: dict[str, Any]) -> dict[Platforms, PlatformData]:
+    parsed: dict[Platforms, PlatformData] = {}
+    for platform_key, payload in raw_data.items():
+        platform = Platforms(platform_key)
+        parsed[platform] = PlatformDataFactory.create(platform, payload)
+    return parsed
+
 
 @dataclass
-class MapItem:
+class FolderItem:
     map: str
     platform_data: dict[Platforms, PlatformData]
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "MapItem":
+    def from_dict(cls, data: dict[str, Any]) -> "FolderItem":
+        map_platform_data = data.get("platformData", data.get("metaData", {}))
         return cls(
             map=data.get("map", ""),
-            platform_data={Platforms(platform): PlatformData.from_dict(data) for platform, data in data.get("platformData", {}).items()},
+            platform_data=parse_platform_data_dict(map_platform_data),
         )
     
 @dataclass
@@ -73,8 +137,8 @@ class Config:
     config_file_path: str
     upload_times: list[UploadTime]
     start_time: datetime.datetime
-    maps: list[MapItem]
-    platform_data: dict[str, PlatformData]
+    folders: list[FolderItem]
+    platform_data: dict[Platforms, PlatformData]
 
     @classmethod
     def from_dict(cls, file_path: str, data: dict[str, Any]) -> "Config":
@@ -86,6 +150,6 @@ class Config:
             config_file_path=file_path,
             upload_times=[UploadTime.from_dict(item) for item in data.get("uploadTimes", [])],
             start_time=start_time,
-            maps=[MapItem.from_dict(item) for item in data.get("maps", [])],
-            platform_data= PlatformData.from_dict(data.get("metaData", {})),
+            folders=[FolderItem.from_dict(item) for item in data.get("folders", [])],
+            platform_data=parse_platform_data_dict(data.get("platformData", {})),
         )

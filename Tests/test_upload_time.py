@@ -1,22 +1,35 @@
 from unittest import TestCase
-from Classes.config import *
-from Helpers.config_helper import *
+import datetime
+
+from Classes.config import UploadTime
+from Classes.upload_times import next_upload_datetime
 
 
-class ConfigTests(TestCase):
+class TimeTests(TestCase):
 
-    def test_load_config__should_load_config_from_file(self):
-        platform_data = dict[str, PlatformData]()
-        platform_data[Platforms.YOUTUBE.value] = YoutubeData(description="Youtube description", tags=["tag1"], category=22)
-        platform_data[Platforms.BLUESKY.value] = BlueskyData(description="Bluesky description", tags=["tag2"])
+    def test_next_upload_datetime_should_return_correct_dates(self):
+        now = datetime.datetime(2026, 6, 6, 10, 0)  # Saturday
+        upload_time = UploadTime(day=0, hour=11, minute=0)  # Monday at 11:00
+        expected = datetime.datetime(2026, 6, 8, 11, 0)  # Next Monday
 
-        map_item = MapItem("./test_videos", platform_data)
-        upload_times = [UploadTime(day=3, hour=13, minute=0), UploadTime(day=5, hour=11, minute=0)]
-        start_time = datetime.datetime(2026, 6, 1)
-        config_file_path = "test_config.json"
-        expected = Config(config_file_path, upload_times, start_time, [map_item], platform_data)
+        result = next_upload_datetime(upload_time, now)
 
+        self.assertEqual(expected, result)
 
-        result = load_config(config_file_path)
+    def test_next_upload_datetime_should_keep_today_when_release_is_still_ahead(self):
+        now = datetime.datetime(2026, 6, 8, 10, 0)  # Monday before release
+        upload_time = UploadTime(day=0, hour=11, minute=0)  # Monday at 11:00
+        expected = datetime.datetime(2026, 6, 8, 11, 0)
+
+        result = next_upload_datetime(upload_time, now)
+
+        self.assertEqual(expected, result)
+
+    def test_next_upload__upload_time_is_today_but_after_release_time__should_go_to_next_week(self):
+        now = datetime.datetime(2026, 6, 8, 12, 0)  # Monday an hour after upload time
+        upload_time = UploadTime(day=0, hour=11, minute=0)  # Monday at 11:00
+        expected = datetime.datetime(2026, 6, 15, 11, 0)
+
+        result = next_upload_datetime(upload_time, now)
 
         self.assertEqual(expected, result)

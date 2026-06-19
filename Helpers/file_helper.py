@@ -4,7 +4,6 @@ import os
 from datetime import date, datetime
 from dataclasses import asdict, is_dataclass
 from typing import Any
-from Classes.config import Config
 
 
 def json_default(value: Any) -> str:

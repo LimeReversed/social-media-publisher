@@ -29,6 +29,14 @@ class Schedule:
         video_schedule = []
 
         for publication in self.publication_list:
-            video_schedule += f"{publication.video.name} at {publication.upload_time}"
+            if publication.video:
+                video_schedule.append(f"{publication.video.name} at {publication.upload_time}")
 
         return video_schedule
+    
+    def get_due(self, start_time: datetime) -> list[Publication]:
+        due_publications = []
+        for publication in self.publication_list:
+            if publication.upload_time and publication.upload_time <= start_time:
+                due_publications.append(publication)
+        return due_publications

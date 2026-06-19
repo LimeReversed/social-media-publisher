@@ -10,15 +10,24 @@ class Publication(ABC):
         self.platform_data: dict[Platforms, PlatformData] = platform_data
 
     @abstractmethod
-    def get_title(self):
+    def get_name(self):
         ...
 
 class VideoPublication(Publication):
     """The publication classes hold information about the publication, such as what, when and where to publish."""
-    def __init__(self, video: Video, platform_data: dict[Platforms, PlatformData], upload_time: datetime | None = None):
+    def __init__(
+        self,
+        video: Video,
+        platform_data: dict[Platforms, PlatformData],
+        upload_time: datetime | None = None,
+        config_file_path: str = "",
+        source_folder: str = "",
+    ):
         self.upload_time: datetime | None = upload_time
         self.video: Video = video
         self.platform_data: dict[Platforms, PlatformData] = platform_data
+        self.config_file_path: str = config_file_path
+        self.source_folder: str = source_folder
 
-    def get_title(self) -> str:
+    def get_name(self) -> str:
         return self.video.name

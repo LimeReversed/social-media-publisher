@@ -1,5 +1,5 @@
 from Classes.config import *
-from file_helper import load_json
+from Helpers.file_helper import load_json
 
 def load_config(file_path: str) -> Config:
     config_data = load_json(file_path)

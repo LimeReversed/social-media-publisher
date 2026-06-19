@@ -1,39 +1,101 @@
+import threading
 import time
-from Classes.publisher import *
-from Helpers.file_helper import *
 from datetime import datetime
+
+from Classes.config import Config
+from Classes.publication import VideoPublication
+from Classes.publisher_manager import PublisherManager
 from Helpers.config_helper import load_config_list
+from Helpers.file_helper import get_current_directory, get_files
 from Helpers.schedule_helper import constuct_schedule_from_config_list
+from Helpers.upload_state_helper import mark_uploaded
 
-print("Initializing...")
-config_paths = get_files(f"{get_current_directory()}/Config", ["*.schedule.json", ".video.json"])
 
-config_list: list[Config] = load_config_list(config_paths)
-schedule = constuct_schedule_from_config_list(config_list)
-uploaded_path = f"{get_current_directory()}/uploaded.json"
-uploaded = load_json(uploaded_path)
+class PublisherApp:
+    def __init__(self) -> None:
+        self.stop_event = threading.Event()
+        self.listener = threading.Thread(target=self._command_listener, daemon=True)
+        self.config_list: list[Config] = []
+        self.publisher_manager: PublisherManager | None = None
+        self.refresh_interval = 900 #In seconds
+        """This determines how often the app checks for due publications. The value is in seconds."""
 
-print("Initialization complete.")
-print("Publish schedule:")
-schedule.print_schedule()
+    def setup(self) -> None:
+        print("Initializing...")
+        config_paths = get_files(
+            f"{get_current_directory()}/Config", ["*.schedule.json", ".video.json"]
+        )
 
-print("Starting publish loop...")
-next_publication = schedule.next_publish()
-print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
+        self.config_list = load_config_list(config_paths)
+        schedule = constuct_schedule_from_config_list(self.config_list)
+        self.publisher_manager = PublisherManager(schedule)
+        self._wire_events()
 
-while True:
-    now = datetime.now()
-    for publication in schedule.publication_list:
-        if publication.upload_time and publication.upload_time <= now:
-            print(f"Publishing {publication.video.name}...")
-            publication.publish_all()
-            schedule.publication_list.remove(publication)
-            
-            uploaded.append(publication.video.video_id)
-            save_json(uploaded, uploaded_path)
-            
-            next_publication = schedule.next_publish()
-            print(f"Next publish: {next_publication.video.name} at {next_publication.upload_time}")
-    
-    # time.sleep(900)  # Check every 15 minutes
-    time.sleep(5)  # Check every 5 seconds    
+        print("Initialization complete.")
+        
+
+    def _wire_events(self) -> None:
+        if self.publisher_manager is None:
+            return
+        self.publisher_manager.on_published += self.on_publication_published
+
+    def _print_schedule(self) -> None:
+        if self.publisher_manager is None:
+            return
+        print("Publish schedule:")
+        for publication in self.publisher_manager.schedule.publication_list:
+            print(f"- {publication.get_name()} at {publication.upload_time}")
+
+    def _print_next_publish(self) -> None:
+        if self.publisher_manager is None:
+            return
+        if not self.publisher_manager.schedule.publication_list:
+            return
+
+        next_publication = self.publisher_manager.schedule.next_publish()
+        print(f"Next publish: {next_publication.get_name()} at {next_publication.upload_time}")
+
+    def on_publication_published(self, publication) -> None:
+        print(f"Published: {publication.get_name()}")
+
+        if isinstance(publication, VideoPublication):
+            mark_uploaded(
+                config_file_path=publication.config_file_path,
+                folder_path=publication.source_folder,
+                video_id=publication.video.video_id,
+            )
+
+        self._print_next_publish()
+
+    def _command_listener(self) -> None:
+        while not self.stop_event.is_set():
+            cmd = input().strip().lower()
+            if cmd in ("q", "quit", "exit", "stop"):
+                print("Stopping...")
+                self.stop_event.set()
+
+    def run(self) -> None:
+        self.setup()
+        self.listener.start()
+        self._print_schedule()
+        self._print_next_publish()
+        print("Starting publish loop...")
+
+        while not self.stop_event.is_set():
+            if self.publisher_manager is None:
+                break
+
+            now = datetime.now()
+            due = self.publisher_manager.schedule.get_due(now)
+
+            if due:
+                self.publisher_manager.publish_multiple(due)
+
+            time.sleep(self.refresh_interval)
+
+        print("Program ended.")
+
+
+if __name__ == "__main__":
+    app = PublisherApp()
+    app.run()
