@@ -1,63 +1,140 @@
 from dataclasses import dataclass
 import datetime
+from enum import Enum
 from typing import Any
+from abc import ABC, abstractmethod
+
+class Platforms(Enum):
+    YOUTUBE = "youtube"
+    BLUESKY = "bluesky"
+    
+@dataclass
+class PlatformData(ABC):
+    @classmethod
+    @abstractmethod
+    def from_dict(cls, data: dict[str, Any]) -> "PlatformData":
+        ...
+
+    @abstractmethod
+    def merge(self, local: "PlatformData") -> "PlatformData":
+        ...
 
 @dataclass
-class YouTubeMeta:
-    titlePrefix: str
+class YoutubeData(PlatformData):
     description: str
     tags: list[str]
-    category: int
+    category: str
+    privacy_status: str
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "YouTubeMeta":
+    def from_dict(cls, data: dict[str, Any]) -> "YoutubeData":
         return cls(
-            titlePrefix=data.get("titlePrefix", ""),
             description=data.get("description", ""),
             tags=data.get("tags", []),
-            category=data.get("category", 0),
+            category=data.get("category", ""),
+            privacy_status=data.get("privacy_status", "public"),
+        )
+
+    def merge(self, other: "YoutubeData") -> "YoutubeData":
+        if not isinstance(other, YoutubeData):
+            raise TypeError("YoutubeData can only merge with YoutubeData")
+
+        return YoutubeData(
+            description=merge_text(self.description, other.description),
+            tags=merge_tags(self.tags, other.tags),
+            category=other.category if other.category else self.category,
+            privacy_status=other.privacy_status if other.privacy_status else self.privacy_status,
         )
 
 
 @dataclass
-class BlueskyMeta:
-    description: str
+class BlueskyData(PlatformData):
+    text: str
     tags: list[str]
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "BlueskyMeta":
+    def from_dict(cls, data: dict[str, Any]) -> "BlueskyData":
         return cls(
-            description=data.get("description", ""),
+            text=data.get("text", ""),
             tags=data.get("tags", []),
         )
 
+    def merge(self, other: "BlueskyData") -> "BlueskyData":
+        if not isinstance(other, BlueskyData):
+            raise TypeError("BlueskyData can only merge with BlueskyData")
 
-@dataclass
-class MetaData:
-    youtube: YouTubeMeta
-    bluesky: BlueskyMeta
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "MetaData":
-        return cls(
-            youtube=YouTubeMeta.from_dict(data.get("youtube", {})),
-            bluesky=BlueskyMeta.from_dict(data.get("bluesky", {})),
+        return BlueskyData(
+            text=merge_text(self.text, other.text),
+            tags=merge_tags(self.tags, other.tags),
         )
 
 
-@dataclass
-class MapItem:
-    map: str
-    metaData: MetaData
+def merge_text(global_text: str, local_text: str) -> str:
+    parts = [text for text in [global_text.strip(), local_text.strip()] if text]
+    return "\n\n".join(parts)
+
+
+def merge_tags(global_tags: list[str], local_tags: list[str]) -> list[str]:
+    seen: set[str] = set()
+    merged: list[str] = []
+
+    for tag in [*global_tags, *local_tags]:
+        if tag not in seen:
+            seen.add(tag)
+            merged.append(tag)
+
+    return merged
+
+
+class PlatformDataFactory:
+    _platform_class_folder: dict[Platforms, type[PlatformData]] = {
+        Platforms.YOUTUBE: YoutubeData,
+        Platforms.BLUESKY: BlueskyData,
+    }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "MapItem":
+    def create(cls, platform: Platforms, data: dict[str, Any]) -> PlatformData:
+        platform_cls = cls._platform_class_folder.get(platform)
+        if platform_cls is None:
+            raise ValueError(f"No PlatformData parser found for platform: {platform.value}")
+        return platform_cls.from_dict(data)
+
+
+@dataclass
+class PlatformDataCollection:
+    youtube: YoutubeData | None = None
+    bluesky: BlueskyData | None = None
+
+
+def parse_platform_data_dict(raw_data: dict[str, Any]) -> PlatformDataCollection:
+    collection = PlatformDataCollection()
+    for platform_key, payload in raw_data.items():
+        platform = Platforms(platform_key)
+        data = PlatformDataFactory.create(platform, payload)
+        if platform == Platforms.YOUTUBE:
+            if not isinstance(data, YoutubeData):
+                raise TypeError("Expected YoutubeData for youtube platform")
+            collection.youtube = data
+        elif platform == Platforms.BLUESKY:
+            if not isinstance(data, BlueskyData):
+                raise TypeError("Expected BlueskyData for bluesky platform")
+            collection.bluesky = data
+    return collection
+
+
+@dataclass
+class FolderItem:
+    folder: str
+    platform_data: PlatformDataCollection
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "FolderItem":
+        folder_platform_data = data.get("platformData", data.get("platformData", {}))
         return cls(
-            map=data.get("map", ""),
-            metaData=MetaData.from_dict(data.get("metaData", {})),
+            folder=data.get("folder", ""),
+            platform_data=parse_platform_data_dict(folder_platform_data),
         )
-
-
+    
 @dataclass
 class UploadTime:
     day: int
@@ -74,20 +151,22 @@ class UploadTime:
 
 @dataclass
 class Config:
-    uploadTimes: list[UploadTime]
-    startTime: datetime.datetime
-    uploaded: list[str]
-    maps: list[MapItem]
+    config_file_path: str
+    upload_times: list[UploadTime]
+    start_time: datetime.datetime
+    folders: list[FolderItem]
+    platform_data: PlatformDataCollection
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Config":
+    def from_dict(cls, file_path: str, data: dict[str, Any]) -> "Config":
         
         start_date_string = data.get("startDate", data.get("startTime", None))
         start_time = datetime.datetime.now() if start_date_string == None else datetime.datetime.fromisoformat(start_date_string) 
         
         return cls(
-            uploadTimes=[UploadTime.from_dict(item) for item in data.get("uploadTimes", [])],
-            startTime=start_time,
-            uploaded=data.get("uploaded", []),
-            maps=[MapItem.from_dict(item) for item in data.get("maps", [])],
+            config_file_path=file_path,
+            upload_times=[UploadTime.from_dict(item) for item in data.get("uploadTimes", [])],
+            start_time=start_time,
+            folders=[FolderItem.from_dict(item) for item in data.get("folders", [])],
+            platform_data=parse_platform_data_dict(data.get("platformData", {})),
         )

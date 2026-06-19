@@ -4,7 +4,6 @@ import os
 from datetime import date, datetime
 from dataclasses import asdict, is_dataclass
 from typing import Any
-from Classes.config import Config
 
 
 def json_default(value: Any) -> str:
@@ -48,7 +47,7 @@ def save_json(data: Any, file_path: str) -> None:
         file.write(data)
 
 
-def load_json(file_path: str):
+def load_json(file_path: str) -> Any:
     directory = os.path.dirname(file_path)
 
     if directory and not os.path.exists(directory):
@@ -56,16 +55,6 @@ def load_json(file_path: str):
 
     with open(file_path, 'r', encoding='utf-8') as file:
         return json.loads(file.read())
-
-
-def load_config(file_path: str) -> Config:
-    config_data = load_json(file_path)
-
-    if config_data is None:
-        raise FileNotFoundError(f"Config file not found: {file_path}")
-
-    return Config.from_dict(config_data)
-
 
 def get_current_directory():
     return os.path.abspath(os.path.curdir)

@@ -1,0 +1,47 @@
+{
+  "uploadTimes": [
+    {
+      "day": 3,
+      "hour": 12,
+      "minute": 00
+    },
+    {
+      "day": 5,
+      "hour": 12,
+      "minute": 00
+    }
+  ],
+  "startDate": "2026-01-01",
+  "platformData": {
+    "youtube": {
+      "description": "Your description here. It will be shown in the description for all the videos referenced in this config",
+      "tags": ["tag 1", "tag 2"],
+      "category": "22",
+      "privacy_status": "public"
+    },
+    "bluesky": {
+      "text": "Your post text goes here",
+      "tags": ["Tag 1", "Tag 2"]
+    }
+  },
+  "folders": [
+    {
+      "folder": "Path to folder with videos",
+      "platformData": {
+        "youtube": {
+          "description": "Your video description goes here. This will come before the description that all videos get",
+          "tags": [],
+          "category": "22",
+          "privacy_status": "public"
+        },
+        "bluesky": {
+          "text": "Your post text goes here. This will be before the global text",
+          "tags": ["Tag 1", "Tag 2"]
+        }
+      }
+    },
+    {
+      "folder": "Path to second folder with videos"
+    }
+  ]
+}
