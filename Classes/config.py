@@ -97,18 +97,32 @@ class PlatformDataFactory:
         return platform_cls.from_dict(data)
 
 
-def parse_platform_data_dict(raw_data: dict[str, Any]) -> dict[Platforms, PlatformData]:
-    parsed: dict[Platforms, PlatformData] = {}
+@dataclass
+class PlatformDataCollection:
+    youtube: YoutubeData | None = None
+    bluesky: BlueskyData | None = None
+
+
+def parse_platform_data_dict(raw_data: dict[str, Any]) -> PlatformDataCollection:
+    collection = PlatformDataCollection()
     for platform_key, payload in raw_data.items():
         platform = Platforms(platform_key)
-        parsed[platform] = PlatformDataFactory.create(platform, payload)
-    return parsed
+        data = PlatformDataFactory.create(platform, payload)
+        if platform == Platforms.YOUTUBE:
+            if not isinstance(data, YoutubeData):
+                raise TypeError("Expected YoutubeData for youtube platform")
+            collection.youtube = data
+        elif platform == Platforms.BLUESKY:
+            if not isinstance(data, BlueskyData):
+                raise TypeError("Expected BlueskyData for bluesky platform")
+            collection.bluesky = data
+    return collection
 
 
 @dataclass
 class FolderItem:
     map: str
-    platform_data: dict[Platforms, PlatformData]
+    platform_data: PlatformDataCollection
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "FolderItem":
@@ -138,7 +152,7 @@ class Config:
     upload_times: list[UploadTime]
     start_time: datetime.datetime
     folders: list[FolderItem]
-    platform_data: dict[Platforms, PlatformData]
+    platform_data: PlatformDataCollection
 
     @classmethod
     def from_dict(cls, file_path: str, data: dict[str, Any]) -> "Config":

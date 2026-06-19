@@ -35,16 +35,16 @@ class YoutubePublisher(Publisher):
         )
 
 class BlueskyPublisher(Publisher):
-    def __init__(self, description: str):
-        super().__init__(description)
+    def __init__(self, text: str):
+        super().__init__(text)
         self.type: str = "Bluesky"
 
     def publish(self):
         post_bluesky(text=self.description)
 
 class BlueskyWithVideoPublisher(BlueskyPublisher):
-    def __init__(self, description: str, youtube_video_id: str = ""):
-        super().__init__(description)
+    def __init__(self, text: str, youtube_video_id: str = ""):
+        super().__init__(text)
         self.youtube_video_id: str = youtube_video_id
 
     def publish(self):

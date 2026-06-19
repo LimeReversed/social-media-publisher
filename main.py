@@ -17,8 +17,8 @@ class PublisherApp:
         self.listener = threading.Thread(target=self._command_listener, daemon=True)
         self.config_list: list[Config] = []
         self.publisher_manager: PublisherManager | None = None
-        self.refresh_interval = 900 #In seconds
-        """This determines how often the app checks for due publications. The value is in seconds."""
+        self.refresh_interval = 900
+        """The value is in seconds. This determines how often the app checks for due publications."""
 
     def setup(self) -> None:
         print("Initializing...")

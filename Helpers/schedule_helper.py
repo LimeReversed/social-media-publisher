@@ -1,5 +1,5 @@
 from Classes.upload_times import UploadTimes
-from Classes.config import Config, PlatformData, Platforms
+from Classes.config import Config, PlatformDataCollection
 from Helpers.file_helper import *
 from Helpers.upload_state_helper import get_uploaded_ids, is_folder_completed, load_upload_state
 from Classes.publication import Publication, VideoPublication
@@ -7,25 +7,23 @@ from Classes.video import Video
 from Classes.schedule import Schedule
 
 def merge_platform_data(
-    global_platform_data: dict[Platforms, PlatformData],
-    map_platform_data: dict[Platforms, PlatformData],
-) -> dict[Platforms, PlatformData]:
-    merged: dict[Platforms, PlatformData] = {}
-    platforms = set(global_platform_data.keys()) | set(map_platform_data.keys())
+    global_data: PlatformDataCollection,
+    local_data: PlatformDataCollection,
+) -> PlatformDataCollection:
+    if global_data.youtube and local_data.youtube:
+        youtube = global_data.youtube.merge(local_data.youtube)
+    else:
+        youtube = local_data.youtube or global_data.youtube
 
-    for platform in platforms:
-        global_data = global_platform_data.get(platform)
-        local_data = map_platform_data.get(platform)
+    if global_data.bluesky and local_data.bluesky:
+        bluesky = global_data.bluesky.merge(local_data.bluesky)
+    else:
+        bluesky = local_data.bluesky or global_data.bluesky
 
-        if global_data and local_data:
-            merged[platform] = global_data.merge(local_data)
-        elif local_data:
-            merged[platform] = local_data
-        elif global_data:
-            merged[platform] = global_data
+    return PlatformDataCollection(youtube=youtube, bluesky=bluesky)
 
-    return merged
-
+def sort_by_creation_time(publication_list: list[Publication]) -> None:
+        publication_list.sort(key=lambda pub: pub.video.creation_time if isinstance(pub, VideoPublication) and pub.video else float('inf'))
 
 def constuct_schedule_from_config_list(config_list: list[Config]) -> Schedule:
         publish_list: list[Publication] = []
@@ -57,8 +55,9 @@ def constuct_schedule_from_config_list(config_list: list[Config]) -> Schedule:
                         )
                         publish_list.append(publication)
 
+            sort_by_creation_time(publish_list)
             populated_publish_list = populate_upload_times(publish_list, upload_times)
-            publish_list += populated_publish_list
+            publish_list = populated_publish_list
 
         return Schedule(publish_list)
 
