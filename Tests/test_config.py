@@ -30,8 +30,8 @@ class ConfigTests(TestCase):
             bluesky=BlueskyData(text="Bluesky description", tags=["tag2"]),
         )
 
-        # Current parsing logic uses key "map"; test fixture uses "folder", which maps to empty string.
-        map_item = FolderItem("", platform_data)
+        # Current parsing logic uses key "folder"; test fixture uses "folder", which folders to empty string.
+        folder_item = FolderItem("", platform_data)
         global_platform_data = PlatformDataCollection(
             youtube=YoutubeData(description="", tags=[], category="", privacy_status="public"),
             bluesky=BlueskyData(text="", tags=[]),
@@ -40,6 +40,6 @@ class ConfigTests(TestCase):
         start_time = datetime.datetime(2026, 6, 1)
         config_file_path = os.path.abspath("./Tests/mocks/config_mock_1.schedule.json")
 
-        expected = Config(config_file_path, upload_times, start_time, [map_item], global_platform_data)
+        expected = Config(config_file_path, upload_times, start_time, [folder_item], global_platform_data)
         result = load_config(config_file_path)
         self.assertEqual(expected, result)

@@ -41,7 +41,7 @@
       }
     },
     {
-      "map": "Path to second folder with videos"
+      "folder": "Path to second folder with videos"
     }
   ]
 }

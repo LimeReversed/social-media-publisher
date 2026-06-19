@@ -87,14 +87,14 @@ def merge_tags(global_tags: list[str], local_tags: list[str]) -> list[str]:
 
 
 class PlatformDataFactory:
-    _platform_class_map: dict[Platforms, type[PlatformData]] = {
+    _platform_class_folder: dict[Platforms, type[PlatformData]] = {
         Platforms.YOUTUBE: YoutubeData,
         Platforms.BLUESKY: BlueskyData,
     }
 
     @classmethod
     def create(cls, platform: Platforms, data: dict[str, Any]) -> PlatformData:
-        platform_cls = cls._platform_class_map.get(platform)
+        platform_cls = cls._platform_class_folder.get(platform)
         if platform_cls is None:
             raise ValueError(f"No PlatformData parser found for platform: {platform.value}")
         return platform_cls.from_dict(data)
@@ -124,15 +124,15 @@ def parse_platform_data_dict(raw_data: dict[str, Any]) -> PlatformDataCollection
 
 @dataclass
 class FolderItem:
-    map: str
+    folder: str
     platform_data: PlatformDataCollection
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "FolderItem":
-        map_platform_data = data.get("platformData", data.get("metaData", {}))
+        folder_platform_data = data.get("platformData", data.get("platformData", {}))
         return cls(
-            map=data.get("map", ""),
-            platform_data=parse_platform_data_dict(map_platform_data),
+            folder=data.get("folder", ""),
+            platform_data=parse_platform_data_dict(folder_platform_data),
         )
     
 @dataclass

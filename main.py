@@ -13,10 +13,10 @@ from Helpers.upload_state_helper import mark_uploaded
 class PublisherApp:
     def __init__(self) -> None:
         self.stop_event = threading.Event()
-        self.listener = threading.Thread(target=self._command_listener, daemon=True)
+        self.thread = threading.Thread(target=self._command_listener, daemon=True)
         self.config_list: list[Config] = []
         self.publisher_manager: PublisherManager | None = None
-        self.refresh_interval = 900
+        self.refresh_interval = 60
         """The value is in seconds. This determines how often the app checks for due publications."""
 
     def setup(self) -> None:
@@ -75,7 +75,7 @@ class PublisherApp:
 
     def run(self) -> None:
         self.setup()
-        self.listener.start()
+        self.thread.start()
         self._print_schedule()
         self._print_next_publish()
         print("Starting publish loop...")
@@ -90,8 +90,10 @@ class PublisherApp:
             if due:
                 self.publisher_manager.publish_multiple(due)
 
-            time.sleep(self.refresh_interval)
-
+            if not self.stop_event.is_set():
+                time.sleep(self.refresh_interval)
+        
+        self.thread.join()
         print("Program ended.")
 
 
