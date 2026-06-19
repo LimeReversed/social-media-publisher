@@ -1,0 +1,45 @@
+{
+  "name": "So that the program knows what file to target when saving. Actually, maybe this should be automatic. Or I put it in the instance automatically, so then I don't need it here",
+  "uploadTimes": [
+    {
+      "day": 3,
+      "hour": 13,
+      "minute": 0
+    },
+    {
+      "day": 5,
+      "hour": 11,
+      "minute": 0
+    }
+  ],
+  "startDate": "",
+  "platformData": {
+    "youtube": {
+      "description": "",
+      "tags": [],
+      "category": "22",
+      "privacy_status": "public"
+    },
+    "bluesky": {
+      "text": "",
+      "tags": []
+    }
+  },
+  "folders": [
+    {
+      "folder": "E:/Projects/Game Barks/Twilight Princess/Clips",
+      "platformData": {
+        "youtube": {
+          "description": "",
+          "tags": [],
+          "category": "22",
+          "privacy_status": "public"
+        },
+        "bluesky": {
+          "text": "",
+          "tags": []
+        }
+      }
+    }
+  ]
+}
