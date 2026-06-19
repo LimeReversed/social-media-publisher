@@ -20,12 +20,13 @@ class VideoPublication(Publication):
         video: Video,
         platform_data: PlatformDataCollection,
         upload_time: datetime | None = None,
+
+        # FIX These are only used for tracking which videos have been published.
         config_file_path: str = "",
         source_folder: str = "",
     ):
-        self.upload_time: datetime | None = upload_time
+        super().__init__(platform_data=platform_data, upload_time=upload_time)
         self.video: Video = video
-        self.platform_data: PlatformDataCollection = platform_data
         self.config_file_path: str = config_file_path
         self.source_folder: str = source_folder
 

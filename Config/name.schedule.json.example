@@ -16,7 +16,8 @@
     "youtube": {
       "description": "Your description here. It will be shown in the description for all the videos referenced in this config",
       "tags": ["tag 1", "tag 2"],
-      "category": 22
+      "category": "22",
+      "privacy_status": "public"
     },
     "bluesky": {
       "text": "Your post text goes here",
@@ -30,7 +31,8 @@
         "youtube": {
           "description": "Your video description goes here. This will come before the description that all videos get",
           "tags": [],
-          "category": 22
+          "category": "22",
+          "privacy_status": "public"
         },
         "bluesky": {
           "text": "Your post text goes here. This will be before the global text",

@@ -23,14 +23,16 @@ class PlatformData(ABC):
 class YoutubeData(PlatformData):
     description: str
     tags: list[str]
-    category: int
+    category: str
+    privacy_status: str
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "YoutubeData":
         return cls(
             description=data.get("description", ""),
             tags=data.get("tags", []),
-            category=data.get("category", 0),
+            category=data.get("category", ""),
+            privacy_status=data.get("privacy_status", "public"),
         )
 
     def merge(self, other: "YoutubeData") -> "YoutubeData":
@@ -41,6 +43,7 @@ class YoutubeData(PlatformData):
             description=merge_text(self.description, other.description),
             tags=merge_tags(self.tags, other.tags),
             category=other.category if other.category else self.category,
+            privacy_status=other.privacy_status if other.privacy_status else self.privacy_status,
         )
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from Classes.publication import Publication, VideoPublication
+from Classes.publication import Publication
 
 class Schedule:
     def __init__(self, publication_list: list[Publication]):

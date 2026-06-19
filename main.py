@@ -1,7 +1,6 @@
 import threading
 import time
 from datetime import datetime
-
 from Classes.config import Config
 from Classes.publication import VideoPublication
 from Classes.publisher_manager import PublisherManager
