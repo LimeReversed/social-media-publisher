@@ -1,7 +1,7 @@
 from unittest import TestCase
 import datetime
 import os
-
+from Helpers.print_helper import fprint
 from Classes.config import BlueskyData, Config, FolderItem, PlatformDataCollection, UploadTime, YoutubeData
 from Helpers.config_helper import load_config
 
@@ -31,7 +31,7 @@ class ConfigTests(TestCase):
         )
 
         # Current parsing logic uses key "folder"; test fixture uses "folder", which folders to empty string.
-        folder_item = FolderItem("", platform_data)
+        folder_item = FolderItem("./test_videos", platform_data)
         global_platform_data = PlatformDataCollection(
             youtube=YoutubeData(description="", tags=[], category="", privacy_status="public"),
             bluesky=BlueskyData(text="", tags=[]),
