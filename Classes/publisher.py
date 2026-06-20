@@ -18,7 +18,7 @@ class YoutubePublisher(Publisher):
         super().__init__()
         self.description: str = publication.platform_data.youtube.description if publication.platform_data.youtube else ""
         self.video_path: str = publication.video.path
-        self.title: str = publication.video.name
+        self.title: str = publication.get_name()
         self.category: str = publication.platform_data.youtube.category if publication.platform_data.youtube else ""
         self.tags: list[str] = publication.platform_data.youtube.tags if publication.platform_data.youtube else []
         self.privacy_status: str = publication.platform_data.youtube.privacy_status if publication.platform_data.youtube else ""

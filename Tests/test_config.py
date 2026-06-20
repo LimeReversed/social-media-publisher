@@ -12,7 +12,7 @@ class ConfigTests(TestCase):
             bluesky=BlueskyData(text="Bluesky description", tags=["tag2"]),
         )
 
-        folder_item = FolderItem("./TestVideos", platform_data)
+        folder_item = FolderItem(os.path.abspath("./Tests/TestVideos"), platform_data)
         global_platform_data = PlatformDataCollection(
             youtube=YoutubeData(description="", tags=[], category="", privacy_status="public"),
             bluesky=BlueskyData(text="", tags=[]),

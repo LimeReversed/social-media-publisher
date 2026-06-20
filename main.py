@@ -62,6 +62,7 @@ class PublisherApp:
                 config_file_path=publication.config_file_path,
                 folder_path=publication.source_folder,
                 video_id=publication.video.video_id,
+                name=publication.get_name(),
             )
 
         self._print_next_publish()

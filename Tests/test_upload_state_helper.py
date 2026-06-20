@@ -4,8 +4,8 @@ from unittest import TestCase
 
 from Helpers.upload_state_helper import (
     get_upload_state_path,
+    get_uploaded_ids,
     load_upload_state,
-    mark_folder_completed,
     mark_uploaded,
     normalize_folder_key,
 )
@@ -19,29 +19,33 @@ class UploadStateHelperTests(TestCase):
 
         self.assertTrue(result.endswith("name.uploaded.json"))
 
-    def test_mark_uploaded__persists_unique_sorted_ids(self):
+    def test_mark_uploaded__persists_by_hash_with_name_and_timestamp(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             config_path = os.path.join(temp_dir, "config.schedule.json")
             folder_path = os.path.join(temp_dir, "videos")
 
-            mark_uploaded(config_path, folder_path, "b")
-            mark_uploaded(config_path, folder_path, "a")
-            mark_uploaded(config_path, folder_path, "a")
+            mark_uploaded(config_path, folder_path, "b", "video-b")
+            mark_uploaded(config_path, folder_path, "a", "video-a")
+            # Duplicate id should update metadata, not create duplicates.
+            mark_uploaded(config_path, folder_path, "a", "video-a-new")
 
             state = load_upload_state(config_path)
             folder_key = normalize_folder_key(folder_path)
-            self.assertEqual(["a", "b"], state["folders"][folder_key]["uploaded_ids"])
-            self.assertEqual("active", state["folders"][folder_key]["status"])
+            uploaded_items = state["folders"][folder_key]["uploaded_items"]
 
-    def test_mark_folder_completed__sets_status_and_clears_ids(self):
+            self.assertEqual({"a", "b"}, set(uploaded_items.keys()))
+            self.assertEqual("video-a-new", uploaded_items["a"]["name"])
+            self.assertIsNotNone(uploaded_items["a"]["uploaded_at"])
+            self.assertEqual("video-b", uploaded_items["b"]["name"])
+            self.assertIsNotNone(uploaded_items["b"]["uploaded_at"])
+
+    def test_get_uploaded_ids__reads_ids_from_uploaded_items_map(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             config_path = os.path.join(temp_dir, "config.schedule.json")
             folder_path = os.path.join(temp_dir, "videos")
 
-            mark_uploaded(config_path, folder_path, "x")
-            mark_folder_completed(config_path, folder_path)
-
+            mark_uploaded(config_path, folder_path, "x", "video-x")
             state = load_upload_state(config_path)
-            folder_key = normalize_folder_key(folder_path)
-            self.assertEqual("completed", state["folders"][folder_key]["status"])
-            self.assertEqual([], state["folders"][folder_key]["uploaded_ids"])
+            uploaded_ids = get_uploaded_ids(state, folder_path)
+
+            self.assertEqual({"x"}, uploaded_ids)

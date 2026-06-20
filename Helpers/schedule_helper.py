@@ -1,7 +1,7 @@
 from Classes.upload_times import UploadTimes
 from Classes.config import Config, PlatformDataCollection
 from Helpers.file_helper import *
-from Helpers.upload_state_helper import get_uploaded_ids, is_folder_completed, load_upload_state
+from Helpers.upload_state_helper import get_uploaded_ids, load_upload_state
 from Classes.publication import Publication, VideoPublication
 from Classes.video import Video
 from Classes.schedule import Schedule
@@ -34,8 +34,6 @@ def constuct_schedule_from_config_list(config_list: list[Config]) -> Schedule:
 
             for folder_item in config.folders:
                 folder_path = folder_item.folder
-                if is_folder_completed(upload_state, folder_path):
-                    continue
 
                 uploaded_ids = get_uploaded_ids(upload_state, folder_path)
                 video_paths = get_files_by_multiple_file_types(folder_path, ["*.mp4", "*.mov", "*.avi", "*.mkv"])

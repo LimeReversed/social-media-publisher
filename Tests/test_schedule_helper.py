@@ -61,7 +61,7 @@ class ScheduleHelperTests(TestCase):
 
     def test_construct_schedule_from_config_list__schedule_has_items(self):
         schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
-        self.assertEqual(2, len(schedule.publication_list), "Expected schedule to have two publications from the test videos")
+        self.assertEqual(3, len(schedule.publication_list), "Expected schedule to have three publications from the test videos")
     
     def test_construct_schedule_from_config_list__creates_video_publications(self):
         schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
