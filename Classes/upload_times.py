@@ -2,8 +2,8 @@ import datetime
 from Classes.config import UploadTime
 
 class UploadTimes:
-    def __init__(self, upload_times: list[UploadTime], start_time: datetime.datetime):
-        self.upcoming_times: list[datetime.datetime] = [next_upload_datetime(upload_time, start_time) for upload_time in upload_times]
+    def __init__(self, upcoming_times: list[UploadTime], start_time: datetime.datetime):
+        self.upcoming_times: list[datetime.datetime] = [next_upload_datetime(upload_time, start_time) for upload_time in upcoming_times]
 
     def _replace(self, old_time: datetime.datetime, new_time: datetime.datetime):
         for i, time in enumerate(self.upcoming_times):

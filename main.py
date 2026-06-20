@@ -5,8 +5,7 @@ from Classes.config import Config
 from Classes.publication import VideoPublication
 from Classes.publisher_manager import PublisherManager
 from Helpers.config_helper import load_config_list
-from Helpers.file_helper import get_current_directory, get_files
-from Helpers.print_helper import fprint
+from Helpers.file_helper import get_current_directory, get_files_by_multiple_file_types
 from Helpers.schedule_helper import constuct_schedule_from_config_list
 from Helpers.upload_state_helper import mark_uploaded
 
@@ -22,12 +21,11 @@ class PublisherApp:
 
     def setup(self) -> None:
         print("Initializing...")
-        config_paths = get_files(
-            f"{get_current_directory()}/Config", ["*.schedule.json", ".video.json"]
+        config_paths = get_files_by_multiple_file_types(
+            f"{get_current_directory()}/Config", ["*.schedule.json", "*.video.json"]
         )
 
         self.config_list = load_config_list(config_paths)
-        fprint(self.config_list)
         schedule = constuct_schedule_from_config_list(self.config_list)
         self.publisher_manager = PublisherManager(schedule)
         self._wire_events()
@@ -92,8 +90,8 @@ class PublisherApp:
             if due:
                 self.publisher_manager.publish_multiple(due)
 
-            if not self.stop_event.is_set():
-                time.sleep(self.refresh_interval)
+            if self.stop_event.wait(self.refresh_interval):
+                break
         
         self.thread.join()
         print("Program ended.")

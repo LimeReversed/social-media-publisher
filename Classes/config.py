@@ -160,8 +160,8 @@ class Config:
     @classmethod
     def from_dict(cls, file_path: str, data: dict[str, Any]) -> "Config":
         
-        start_date_string = data.get("startDate", data.get("startTime", None))
-        start_time = datetime.datetime.now() if start_date_string == None else datetime.datetime.fromisoformat(start_date_string) 
+        start_date_string = data.get("startDate", data.get("startTime", ""))
+        start_time = datetime.datetime.now() if not start_date_string else datetime.datetime.fromisoformat(start_date_string) 
         
         return cls(
             config_file_path=file_path,

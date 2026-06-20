@@ -12,22 +12,32 @@ def json_default(value: Any) -> str:
 
     raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
 
-def get_files(directory: str, file_types: list[str]=[]) -> list[str]:
+def get_files_by_file_type(directory: str, file_type: str) -> list[str]:
     # Use '**' to search recursively and file_types to match specific file types
-    pattern = os.path.join(directory, '**', '*')
-    files = [f for f in glob.glob(pattern, recursive=True) if os.path.isfile(f)]
+    files = []
 
-    if file_types:
-        files = [f for f in files if any(f.endswith(ft) for ft in file_types)]
+    pattern = os.path.join(directory, '**', file_type)
+    # glob.glob returns paths in the same form as the pattern you pass in. To ensure we use os.path.abspath on each result.
+    files = [os.path.abspath(f) for f in glob.glob(pattern, recursive=True) if os.path.isfile(f)]
 
     return files
 
+def get_files_by_multiple_file_types(directory: str, file_types: list[str]) -> list[str]:
+    
+    files = []
 
-def get_files_from_directories(directories: list[str], file_types: list[str]=[]) -> list[str]:
+    for file_type in file_types:
+        files += get_files_by_file_type(directory, file_type)
+        
+    return files
+
+
+
+def get_files_from_directories(directories: list[str], file_types: list[str]) -> list[str]:
     files = []
 
     for directory in directories:
-        files += get_files(directory, file_types)
+        files += get_files_by_multiple_file_types(directory, file_types)
 
     return files
 

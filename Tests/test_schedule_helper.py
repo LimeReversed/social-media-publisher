@@ -63,7 +63,15 @@ class ScheduleHelperTests(TestCase):
         schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
         self.assertEqual(2, len(schedule.publication_list), "Expected schedule to have two publications from the test videos")
     
-    def test_construct_schedule_from_config_list__creates_expected_video_publication(self):
+    def test_construct_schedule_from_config_list__creates_video_publications(self):
+        schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
+        
+        for publication in schedule.publication_list:
+            if not isinstance(publication, VideoPublication):
+                self.fail("Expected all publications to be VideoPublications")
+                return
+    
+    def test_construct_schedule_from_config_list__creates_expected_youtube_data(self):
         schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
         publication = schedule.publication_list[0]
 
@@ -80,16 +88,22 @@ class ScheduleHelperTests(TestCase):
         self.assertEqual(["tag1"], publication.platform_data.youtube.tags)
         self.assertEqual("22", publication.platform_data.youtube.category)
         self.assertEqual("public", publication.platform_data.youtube.privacy_status)
-        
-        # Also test bluesky data is merged correctly from global and local config
-        # FIX: Maybe separate youtube-test from bluesky-test since I could add more platforms. 
-        self.assertIsNotNone(publication.platform_data.bluesky)
 
-        if publication.platform_data.bluesky is None:
-            self.fail("Expected publication to have a bluesky data")
-            return
-        
-        self.assertEqual("Bluesky description", publication.platform_data.bluesky.text)
-        self.assertEqual(["tag2"], publication.platform_data.bluesky.tags)
+    def test_construct_schedule_from_config_list__creates_expected_bluesky_data(self):
+            schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
+            publication = schedule.publication_list[0]
+
+            if not isinstance(publication, VideoPublication):
+                self.fail("Expected a VideoPublication")
+                return
+            
+            self.assertIsNotNone(publication.platform_data.bluesky)
+
+            if publication.platform_data.bluesky is None:
+                self.fail("Expected publication to have a bluesky data")
+                return
+            
+            self.assertEqual("Bluesky description", publication.platform_data.bluesky.text)
+            self.assertEqual(["tag2"], publication.platform_data.bluesky.tags)
 
 

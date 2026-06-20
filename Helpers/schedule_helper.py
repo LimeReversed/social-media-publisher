@@ -27,7 +27,7 @@ def sort_by_creation_time(publication_list: list[Publication]) -> None:
 
 def constuct_schedule_from_config_list(config_list: list[Config]) -> Schedule:
         publish_list: list[Publication] = []
-        
+
         for config in config_list:
             upload_state = load_upload_state(config.config_file_path)
             upload_times = UploadTimes(config.upload_times, config.start_time)
@@ -38,8 +38,8 @@ def constuct_schedule_from_config_list(config_list: list[Config]) -> Schedule:
                     continue
 
                 uploaded_ids = get_uploaded_ids(upload_state, folder_path)
-                video_paths = get_files(folder_path, file_types=[".mp4", ".mov", ".avi", ".mkv"])
-                
+                video_paths = get_files_by_multiple_file_types(folder_path, [".mp4", ".mov", ".avi", ".mkv"])
+
                 # Initialze Video
                 for video_path in video_paths:
                     video = Video(video_path)

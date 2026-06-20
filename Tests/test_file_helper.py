@@ -1,0 +1,14 @@
+from Helpers.file_helper import *
+from unittest import TestCase
+
+class TestFileHelper(TestCase):
+    def test_get_files__returns_the_right_files(self):
+        # Setup
+        test_dir = "Tests/Mocks"
+        expected_files = [os.path.abspath("Tests/Mocks/config_mock_1.schedule.json")]
+        
+        # Exercise
+        result = get_files_by_multiple_file_types(test_dir, ["*.schedule.json", "*.video.json"])
+        
+        # Verify
+        self.assertEqual(result, expected_files, f"Expected {expected_files}, but got {result}")
