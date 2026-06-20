@@ -38,7 +38,7 @@ def constuct_schedule_from_config_list(config_list: list[Config]) -> Schedule:
                     continue
 
                 uploaded_ids = get_uploaded_ids(upload_state, folder_path)
-                video_paths = get_files_by_multiple_file_types(folder_path, [".mp4", ".mov", ".avi", ".mkv"])
+                video_paths = get_files_by_multiple_file_types(folder_path, ["*.mp4", "*.mov", "*.avi", "*.mkv"])
 
                 # Initialze Video
                 for video_path in video_paths:
