@@ -52,7 +52,7 @@ class PublisherApp:
             return
 
         next_publication = self.publisher_manager.schedule.next_publish()
-        print(f"Next publish: {next_publication.get_name()} at {next_publication.upload_time}")
+        print(f"\nNext publish: {next_publication.get_name()} at {next_publication.upload_time}")
 
     def on_publication_published(self, publication) -> None:
         print(f"Published: {publication.get_name()}")
@@ -79,7 +79,7 @@ class PublisherApp:
         self.thread.start()
         self._print_schedule()
         self._print_next_publish()
-        print("Starting publish loop...")
+        print("...")
 
         while not self.stop_event.is_set():
             if self.publisher_manager is None:

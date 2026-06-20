@@ -17,7 +17,9 @@ class PublisherManager:
             youtube_publisher.publish()
 
         if publication.platform_data.bluesky is not None and isinstance(publication, VideoPublication):
-            time.sleep(300)  # Wait for YouTube video to be processed before posting on Bluesky
+            wait = 300  # 5 minutes
+            print(f"Waiting {wait} seconds for YouTube video to be processed before posting on Bluesky...")
+            time.sleep(wait)  # Wait for YouTube video to be processed before posting on Bluesky
             video_id = youtube_publisher.video_id if youtube_publisher else ""
 
             bluesky_publisher = BlueskyWithVideoPublisher(publication, video_id)
