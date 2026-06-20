@@ -12,7 +12,7 @@ class ConfigTests(TestCase):
             bluesky=BlueskyData(text="Bluesky description", tags=["tag2"]),
         )
 
-        folder_item = FolderItem("./test_videos", platform_data)
+        folder_item = FolderItem("./TestVideos", platform_data)
         global_platform_data = PlatformDataCollection(
             youtube=YoutubeData(description="", tags=[], category="", privacy_status="public"),
             bluesky=BlueskyData(text="", tags=[]),
@@ -40,7 +40,7 @@ class ConfigTests(TestCase):
         self.assertEqual(["a", "b", "c"], merged_bluesky.tags)
 
     def test_load_config__loads_config_from_file(self):
-        config_file_path = os.path.abspath("./Tests/mocks/config_mock_1.schedule.json")
+        config_file_path = os.path.abspath("./Tests/Mocks/config_mock_1.schedule.json")
 
         expected = self.create_expected_config(config_file_path)
         result = load_config(config_file_path)

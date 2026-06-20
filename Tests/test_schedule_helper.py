@@ -11,7 +11,7 @@ from Helpers.schedule_helper import constuct_schedule_from_config_list, merge_pl
 
 class ScheduleHelperTests(TestCase):
     def create_schedule_from_config(self, config_file_path: str) -> Schedule:
-        config_file_path = os.path.abspath("./Tests/mocks/config_mock_1.schedule.json")
+        config_file_path = os.path.abspath("./Tests/Mocks/config_mock_1.schedule.json")
         config = load_config(config_file_path)
         return constuct_schedule_from_config_list([config])
     
@@ -60,11 +60,11 @@ class ScheduleHelperTests(TestCase):
         self.assertEqual(result[1].upload_time, datetime.datetime(2026, 6, 2, 9, 0))
 
     def test_construct_schedule_from_config_list__schedule_has_items(self):
-        schedule = self.create_schedule_from_config("./Tests/mocks/config_mock_1.schedule.json")
+        schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
         self.assertEqual(2, len(schedule.publication_list), "Expected schedule to have two publications from the test videos")
     
     def test_construct_schedule_from_config_list__creates_expected_video_publication(self):
-        schedule = self.create_schedule_from_config("./Tests/mocks/config_mock_1.schedule.json")
+        schedule = self.create_schedule_from_config("./Tests/Mocks/config_mock_1.schedule.json")
         publication = schedule.publication_list[0]
 
         if not isinstance(publication, VideoPublication):
@@ -75,7 +75,7 @@ class ScheduleHelperTests(TestCase):
             self.fail("Expected publication to have a youtube data")
             return
         
-        self.assertEqual(os.path.abspath("./Tests/test_videos/test_video_1.mp4"), publication.video.path)
+        self.assertEqual(os.path.abspath("./Tests/TestVideos/test_video_1.mp4"), publication.video.path)
         self.assertEqual("Youtube description", publication.platform_data.youtube.description)
         self.assertEqual(["tag1"], publication.platform_data.youtube.tags)
         self.assertEqual("22", publication.platform_data.youtube.category)
