@@ -1,8 +1,6 @@
-from time import time
-
-from Classes.config import Config, YoutubeData, BlueskyData
-from Classes.publication import Publication, TextPublication, VideoPublication
-from Classes.publisher import YoutubePublisher, BlueskyPublisher, BlueskyWithVideoPublisher
+import time
+from Classes.publication import Publication, VideoPublication
+from Classes.publisher import YoutubePublisher, BlueskyWithVideoPublisher
 from Classes.schedule import Schedule
 from Classes.Event import Event
 
