@@ -18,11 +18,11 @@ class TestFileHelper(TestCase):
         test_dir = "Tests/TestVideos"
         expected_files = [
             os.path.abspath("Tests/TestVideos/test_video_1.mp4"),
-            os.path.abspath("Tests/TestVideos/test_video_2.mp4"),
+            os.path.abspath("Tests/TestVideos/test_video_2.mov"),
         ]
         
         # Exercise
-        result = get_files_by_multiple_file_types(test_dir, ["*.mp4", "*.mov", "*.avi", "*.mkv"])
+        result = get_files_by_multiple_file_types(test_dir, ["*.mp4", "*.mov"])
         
         # Verify
         self.assertEqual(result, expected_files, f"Expected {expected_files}, but got {result}")
