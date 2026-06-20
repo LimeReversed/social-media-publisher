@@ -42,10 +42,11 @@ class BlueskyPublisher(Publisher):
     def publish(self):
         post_bluesky(text=self.text)
 
-class BlueskyWithVideoPublisher(BlueskyPublisher):
-    def __init__(self, publication: TextPublication, youtube_video_id: str = ""):
-        super().__init__(publication)
+class BlueskyWithVideoPublisher(Publisher):
+    def __init__(self, publication: VideoPublication, youtube_video_id: str = ""):
+        super().__init__()
         self.youtube_video_id: str = youtube_video_id
+        self.text: str = publication.get_name()
 
     def publish(self):
         post_bluesky_with_youtube_video(

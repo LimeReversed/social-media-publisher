@@ -51,7 +51,6 @@ def get_files_by_multiple_file_types(directory: str, file_patterns: list[str]) -
     return files
 
 
-
 def get_files_from_directories(directories: list[str], file_patterns: list[str]) -> list[str]:
     files = []
 

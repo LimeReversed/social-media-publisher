@@ -1,3 +1,5 @@
+from time import time
+
 from Classes.config import Config, YoutubeData, BlueskyData
 from Classes.publication import Publication, TextPublication, VideoPublication
 from Classes.publisher import YoutubePublisher, BlueskyPublisher, BlueskyWithVideoPublisher
@@ -16,9 +18,8 @@ class PublisherManager:
             youtube_publisher = YoutubePublisher(publication)
             youtube_publisher.publish()
 
-        #FIX: Separate bluesky publication with bluesky with video embedding, so that one can choose to publish to bluesky without a video.
-        # Could do later when I need just text publications to bluesky.
-        if publication.platform_data.bluesky is not None and isinstance(publication, TextPublication):
+        if publication.platform_data.bluesky is not None and isinstance(publication, VideoPublication):
+            time.sleep(300)  # Wait for YouTube video to be processed before posting on Bluesky
             video_id = youtube_publisher.video_id if youtube_publisher else ""
 
             bluesky_publisher = BlueskyWithVideoPublisher(publication, video_id)
