@@ -1,5 +1,4 @@
 {
-  "name": "So that the program knows what file to target when saving. Actually, maybe this should be automatic. Or I put it in the instance automatically, so then I don't need it here",
   "uploadTimes": [
     {
       "day": 3,
