@@ -4,40 +4,36 @@
       "day": 3,
       "hour": 13,
       "minute": 0
-    },
-    {
-      "day": 5,
-      "hour": 11,
-      "minute": 0
     }
   ],
   "startDate": "",
   "globalPlatformData": {
-    "youtube": {
-      "description": "",
-      "tags": [],
-      "category": "22",
-      "privacy_status": "public"
-    },
+    "all": {},
     "bluesky": {
       "text": "",
-      "tags": []
+      "tags": [],
+      "media": []
     }
   },
-  "type": "video",
-  "folders": [
+  "posts": [
     {
-      "folder": "E:\\Projects\\Game Barks\\Twilight Princess\\Clips",
       "platformData": {
+        "all": {
+          "text": "",
+          "tags": [],
+          "media": []
+        },
         "youtube": {
           "description": "",
           "tags": [],
           "category": "22",
-          "privacy_status": "public"
+          "privacy_status": "public",
+          "media": []
         },
         "bluesky": {
           "text": "",
-          "tags": []
+          "tags": [],
+          "media": []
         }
       }
     }

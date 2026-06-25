@@ -1,0 +1,41 @@
+{
+  "globalPlatformData": {
+    "all": {},
+    "bluesky": { "text": "", "tags": [], "media": [] },
+    "youtube": {
+      "description": "",
+      "tags": [],
+      "category": "22",
+      "privacy_status": "public"
+    }
+  },
+  "specificUploadTimes": [
+    {
+      "date": "2026-06-15",
+      "time": "13:00",
+      "platformData": {
+        "all": {
+          "text": "",
+          "tags": [],
+          "media": []
+        },
+        "youtube": {
+          "description": "",
+          "tags": [],
+          "media": []
+        },
+        "bluesky": {
+          "text": "",
+          "tags": [],
+          "media": [
+            {
+              "type": "video",
+              "location": "platformData.youtube",
+              "locationType": "platform_data"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

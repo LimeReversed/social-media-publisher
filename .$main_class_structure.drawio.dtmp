@@ -1,0 +1,144 @@
+<mxfile host="Electron" agent="Codex" pages="2">
+  <diagram name="Classes UML" id="classes-uml-structured">
+    <mxGraphModel dx="2054" dy="1201" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="legend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ced4da;align=left;spacing=10;fontSize=13;" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;blue = variables / fields&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#07823b&quot;&gt;green = methods&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="230" x="30" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Config" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Config&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;file_path: str&lt;br&gt;upload_times: list[UploadTime]&lt;br&gt;start_time: datetime&lt;br&gt;maps: list[MapItem]&lt;br&gt;meta_data: MetaData&lt;br&gt;uploaded: list[str]&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;from_dict(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="210" width="260" x="70" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="UploadTime" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;UploadTime&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;day: int&lt;br&gt;hour: int&lt;br&gt;minute: int&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;from_dict(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="145" width="220" x="470" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="MapItem" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;MapItem&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;map: str&lt;br&gt;meta_data: MetaData&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;from_dict(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="220" x="470" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="MetaData" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;MetaData&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;youtube: YouTubeMeta&lt;br&gt;bluesky: BlueskyMeta&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;from_dict(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="240" x="820" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="YouTubeMeta" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;YouTubeMeta&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;description: str&lt;br&gt;tags: list[str]&lt;br&gt;category: int&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;from_dict(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="230" x="1190" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="BlueskyMeta" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;BlueskyMeta&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;description: str&lt;br&gt;tags: list[str]&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;from_dict(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="230" x="1190" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="UploadTimes" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;UploadTimes&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;upcoming_times: list[datetime]&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;_replace(...)&lt;br&gt;get_next()&lt;br&gt;pop()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="145" width="260" x="70" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="Schedule" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Schedule&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;publication_list: list[Publication]&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;_sort_by_creation_time()&lt;br&gt;next_publish()&lt;br&gt;get_video_schedule()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="280" x="70" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="Publication" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffdf7;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;i&gt;&amp;lt;&amp;lt;abstract&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;Publication&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;upload_time: datetime | None&lt;br&gt;meta_data: MetaData&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;publish_all()&lt;br&gt;get_title()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="165" width="260" x="470" y="735" as="geometry" />
+        </mxCell>
+        <mxCell id="VideoPublication" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;VideoPublication&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;publishers: dict[str, Publisher]&lt;br&gt;upload_time: datetime | None&lt;br&gt;video: Video&lt;br&gt;meta_data: MetaData&lt;br&gt;youtube_post: YoutubePublisher&lt;br&gt;bluesky_post: BlueskyWithVideoPublisher&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;publish_all()&lt;br&gt;get_title()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="250" width="315" x="820" y="675" as="geometry" />
+        </mxCell>
+        <mxCell id="Video" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Video&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;path: str&lt;br&gt;name: str&lt;br&gt;creation_time: float&lt;br&gt;video_id: str&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;hash_video_file(...)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="165" width="235" x="1250" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="Publisher" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffdf7;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;i&gt;&amp;lt;&amp;lt;abstract&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;Publisher&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;description: str&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;publish()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="125" width="230" x="470" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="YoutubePublisher" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;YoutubePublisher&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;video_path: str&lt;br&gt;title: str&lt;br&gt;category: str&lt;br&gt;keywords: str&lt;br&gt;privacy_status: str&lt;br&gt;type: str&lt;br&gt;video_id: str&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;publish()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="215" width="270" x="810" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="BlueskyPublisher" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;BlueskyPublisher&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;type: str&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;publish()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="115" width="240" x="1190" y="985" as="geometry" />
+        </mxCell>
+        <mxCell id="BlueskyWithVideoPublisher" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#343a40;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;BlueskyWithVideoPublisher&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;youtube_video_id: str&lt;/font&gt;&lt;hr&gt;&lt;font color=&quot;#07823b&quot;&gt;publish()&lt;/font&gt;" vertex="1">
+          <mxGeometry height="115" width="260" x="1510" y="985" as="geometry" />
+        </mxCell>
+        <mxCell id="Platsforms" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#868e96;align=center;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Platsforms&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#1f5fbf&quot;&gt;YOUTUBE&lt;br&gt;BLUESKY&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="190" x="70" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="e_config_uploadtime" edge="1" parent="1" source="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="UploadTime" value="has many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_config_mapitem" edge="1" parent="1" source="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="MapItem" value="has many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_config_metadata" edge="1" parent="1" source="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="MetaData" value="has">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="420" y="265" />
+              <mxPoint x="420" y="520" />
+              <mxPoint x="940" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mapitem_metadata" edge="1" parent="1" source="MapItem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="MetaData" value="has">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_metadata_youtube" edge="1" parent="1" source="MetaData" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="YouTubeMeta" value="has">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_metadata_bluesky" edge="1" parent="1" source="MetaData" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="BlueskyMeta" value="has">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_uploadtimes_uploadtime" edge="1" parent="1" source="UploadTimes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;strokeColor=#868e96;fontColor=#495057;" target="UploadTime" value="uses">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="543" />
+              <mxPoint x="370" y="40" />
+              <mxPoint x="580" y="40" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_schedule_publication" edge="1" parent="1" source="Schedule" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="Publication" value="has many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_videopub_publication" edge="1" parent="1" source="VideoPublication" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;strokeColor=#212529;fontColor=#495057;" target="Publication" value="inherits">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_videopub_video" edge="1" parent="1" source="VideoPublication" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="Video" value="has">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_videopub_metadata" edge="1" parent="1" source="VideoPublication" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;strokeColor=#495057;fontColor=#495057;" target="MetaData" value="has">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="650" />
+              <mxPoint x="1170" y="540" />
+              <mxPoint x="940" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_youtube_publisher" edge="1" parent="1" source="YoutubePublisher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;strokeColor=#212529;fontColor=#495057;" target="Publisher" value="inherits">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bluesky_publisher" edge="1" parent="1" source="BlueskyPublisher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;strokeColor=#212529;fontColor=#495057;" target="Publisher" value="inherits">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="1220" />
+              <mxPoint x="585" y="1220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bluesky_video_publisher" edge="1" parent="1" source="BlueskyWithVideoPublisher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;strokeColor=#212529;fontColor=#495057;" target="BlueskyPublisher" value="inherits">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_videopub_youtube" edge="1" parent="1" source="VideoPublication" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;strokeColor=#868e96;fontColor=#495057;" target="YoutubePublisher" value="creates / uses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_videopub_blueskyvideo" edge="1" parent="1" source="VideoPublication" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;strokeColor=#868e96;fontColor=#495057;" target="BlueskyWithVideoPublisher" value="creates / uses">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1640" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="G7X8L4YDei6h9m8yWPQ5" name="Page-2">
+    <mxGraphModel dx="2054" dy="1201" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

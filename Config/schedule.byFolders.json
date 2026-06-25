@@ -13,6 +13,7 @@
   ],
   "startDate": "",
   "globalPlatformData": {
+    "all": {},
     "youtube": {
       "description": "",
       "tags": [],
@@ -24,11 +25,29 @@
       "tags": []
     }
   },
-  "type": "video",
   "folders": [
     {
       "folder": "E:\\Projects\\Game Barks\\Twilight Princess\\Clips",
+      "folderType": "file_path",
       "platformData": {
+        "all": {},
+        "youtube": {
+          "description": "",
+          "tags": [],
+          "category": "22",
+          "privacy_status": "public"
+        },
+        "bluesky": {
+          "text": "",
+          "tags": []
+        }
+      }
+    },
+    {
+      "folder": "ftp://Projects\\Game Barks\\Twilight Princess\\Clips",
+      "folderType": "ftp",
+      "platformData": {
+        "all": {},
         "youtube": {
           "description": "",
           "tags": [],
