@@ -288,8 +288,23 @@ class UploadTime:
             minute=data.get("minute", 0),
         )
 
+class Config(ABC):
+    def __init__(self, config_file_path: str):
+        self.config_file_path: str = config_file_path
+    
+
+
+class FoldersConfig(Config):
+    def __init__(self, config_file_path: str, upload_times: list[UploadTime], start_time: datetime.datetime, folders: list[FolderItem]):
+        super().__init__(config_file_path) 
+        self.upload_times: list[UploadTime] = upload_times
+        self.start_time: datetime.datetime = start_time
+        self.folders: list[FolderItem] = folders
+
+        
+
 @dataclass
-class Config:
+class Config2:
     config_file_path: str
     upload_times: list[UploadTime]
     start_time: datetime.datetime
