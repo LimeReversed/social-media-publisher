@@ -29,9 +29,9 @@
           "tags": [],
           "media": [
             {
-              "type": "video",
-              "location": "platformData.youtube",
-              "locationType": "platform_data"
+              "type": "video_link",
+              "source": "youtube",
+              "sourceType": "result_of_upload"
             }
           ]
         }

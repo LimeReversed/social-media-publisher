@@ -1,7 +1,8 @@
 from unittest import TestCase
 import datetime
 import os
-from Classes.config import BlueskyData, Config, FolderItem, PlatformDataCollection, UploadTime, YoutubeData
+from typing import cast
+from Classes.config import BlueskyData, Config, FolderItem, MediaItem, PlatformDataCollection, PostItem, SpecificUploadTime, UploadTime, YoutubeData
 from Helpers.config_helper import load_config
 
 class ConfigTests(TestCase):
@@ -45,3 +46,107 @@ class ConfigTests(TestCase):
         expected = self.create_expected_config(config_file_path)
         result = load_config(config_file_path)
         self.assertEqual(expected, result)
+
+    def test_from_dict__supports_global_platform_data_folders_posts_and_specific_upload_times(self):
+        config_data = {
+            "startDate": "2026-06-01",
+            "uploadTimes": [{"day": 3, "hour": 13, "minute": 0}],
+            "globalPlatformData": {
+                "all": {"tags": ["common-tag"]},
+                "youtube": {
+                    "description": "Global youtube description",
+                    "tags": ["youtube-tag"],
+                    "category": "22",
+                    "privacy_status": "public",
+                },
+                "bluesky": {
+                    "text": "Global bluesky text",
+                    "tags": ["bluesky-tag"],
+                    "media": [{"type": "video_link", "source": "youtube", "sourceType": "result_from_upload"}],
+                },
+            },
+            "folders": [
+                {
+                    "folder": os.path.abspath("./Tests/TestVideos"),
+                    "folderType": "file_path",
+                    "platformData": {
+                        "all": {"tags": ["folder-common-tag"]},
+                        "youtube": {
+                            "description": "Folder youtube description",
+                            "tags": ["folder-youtube-tag"],
+                            "category": "23",
+                            "privacy_status": "private",
+                        },
+                    },
+                }
+            ],
+            "posts": [
+                {
+                    "platformData": {
+                        "all": {"tags": ["post-common-tag"]},
+                        "bluesky": {
+                            "text": "Post bluesky text",
+                            "tags": ["post-bluesky-tag"],
+                        },
+                    }
+                }
+            ],
+            "specificUploadTimes": [
+                {
+                    "date": "2026-06-15",
+                    "time": "13:00",
+                    "platformData": {
+                        "all": {"tags": ["specific-common-tag"]},
+                        "youtube": {
+                            "description": "Specific youtube description",
+                            "tags": ["specific-youtube-tag"],
+                            "category": "24",
+                            "privacy_status": "public",
+                        },
+                    },
+                }
+            ],
+        }
+
+        config = Config.from_dict("dummy.json", config_data)
+
+        self.assertEqual(1, len(config.folders))
+        self.assertEqual(1, len(config.posts))
+        self.assertEqual(1, len(config.specific_upload_times))
+
+        youtube_data = config.platform_data.youtube
+        bluesky_data = config.platform_data.bluesky
+
+        self.assertIsNotNone(youtube_data)
+        self.assertIsNotNone(bluesky_data)
+        youtube_data = cast(YoutubeData, youtube_data)
+        bluesky_data = cast(BlueskyData, bluesky_data)
+        self.assertEqual(["common-tag", "youtube-tag"], youtube_data.tags)
+        self.assertEqual(["common-tag", "bluesky-tag"], bluesky_data.tags)
+        self.assertIsNotNone(bluesky_data.media)
+        media_items = cast(list[MediaItem], bluesky_data.media)
+        self.assertEqual(1, len(media_items))
+        self.assertEqual("result_from_upload", media_items[0].sourceType)
+
+        folder = config.folders[0]
+        self.assertEqual(os.path.abspath("./Tests/TestVideos"), folder.folder)
+        folder_youtube = folder.platform_data.youtube
+        self.assertIsNotNone(folder_youtube)
+        folder_youtube = cast(YoutubeData, folder_youtube)
+        self.assertEqual(["youtube-tag", "common-tag", "folder-common-tag", "folder-youtube-tag"], folder_youtube.tags)
+
+        post = config.posts[0]
+        self.assertIsInstance(post, PostItem)
+        post_bluesky = post.platform_data.bluesky
+        self.assertIsNotNone(post_bluesky)
+        post_bluesky = cast(BlueskyData, post_bluesky)
+        self.assertEqual(["bluesky-tag", "common-tag", "post-common-tag", "post-bluesky-tag"], post_bluesky.tags)
+
+        specific_upload_time = config.specific_upload_times[0]
+        self.assertIsInstance(specific_upload_time, SpecificUploadTime)
+        self.assertEqual(datetime.date(2026, 6, 15), specific_upload_time.date)
+        self.assertEqual(datetime.time(13, 0), specific_upload_time.time)
+        specific_youtube = specific_upload_time.platform_data.youtube
+        self.assertIsNotNone(specific_youtube)
+        specific_youtube = cast(YoutubeData, specific_youtube)
+        self.assertEqual("Global youtube description\n\nSpecific youtube description", specific_youtube.description)
